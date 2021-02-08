@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c68dca60-896c-417c-acbe-cf36c7d665d8">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ProjectXXX"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT *
+FROM cvn_question]]>
+	</queryString>
+	<field name="cvn_question_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="cvn_question_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<field name="client_id" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<field name="name" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<field name="type" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="type"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<field name="cvn_poll_id" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="cvn_poll_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="141" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="561" height="81" backcolor="#F0EDED" uuid="ffbfe475-7304-4877-8d7c-d78754e38bbf"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="10" y="10" width="100" height="30" uuid="09ac1954-741e-4971-bb9d-b44a3cea3c73"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Pregunta:]]></text>
+			</staticText>
+			<textField textAdjust="ScaleFont">
+				<reportElement x="110" y="10" width="441" height="66" isPrintWhenDetailOverflows="true" uuid="9ce1d3b4-a99d-45a4-b503-fa491c98cdbd"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="4" y="80" width="552" height="50" uuid="8cddf48c-c23a-44b9-a068-57c1772d73ec"/>
+				<subreportParameter name="cnv_question_id">
+					<subreportParameterExpression><![CDATA[$F{cvn_question_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["QReportG.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

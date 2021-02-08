@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1cec9566-37ac-4af0-b38a-4ce2f96db79b">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ProjectXXX"/>
+	<parameter name="cnv_question_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select u.ref_id, u.name, r.value,r.name as rname,q.cvn_question_id, q.type, q.name as qname from cvn_res_user ru 
+join cvn_response r on r.cvn_response_id = ru.cvn_response_id
+join cvn_user u on u.cvn_user_id = ru.cvn_user_id
+join cvn_question q on q.cvn_question_id = r.cvn_question_id
+where q.cvn_question_id =  $P{cnv_question_id} ]]>
+	</queryString>
+	<field name="ref_id" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="ref_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_user"/>
+	</field>
+	<field name="name" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_user"/>
+	</field>
+	<field name="value" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_response"/>
+	</field>
+	<field name="rname" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="rname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_response"/>
+	</field>
+	<field name="cvn_question_id" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="cvn_question_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<field name="type" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="type"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<field name="qname" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="qname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<textField>
+				<reportElement x="0" y="0" width="278" height="21" uuid="c6a256ee-0988-4511-bca5-cf41828c34bb"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["  "+$F{ref_id}+". "+$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="278" y="0" width="232" height="21" uuid="f32f4705-2c7a-4df0-ae3e-a7e6f1681d8c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["  "+$F{value}+(($F{type}.toString().equals("SN"))?(""):(". "+$F{rname}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

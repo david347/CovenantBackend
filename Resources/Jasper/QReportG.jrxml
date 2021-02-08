@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="QReportG" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2a04075e-590c-4b7e-9349-19282daf958d">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ProjectXXX"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="520"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="466"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="330"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="659"/>
+	<parameter name="cnv_question_id" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[select r.cvn_response_id, r.value, r.name,  
+(  floor(100*
+	sum(u.coefficient)
+	)/	100.0
+		
+) as sum from cvn_response  r
+join cvn_res_user ru on ru.cvn_response_id = r.cvn_response_id
+join cvn_user u on ru.cvn_user_id = u.cvn_user_id
+where r.cvn_question_id=$P{cnv_question_id}  
+group by r.value]]>
+	</queryString>
+	<field name="cvn_response_id" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="cvn_response_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_response"/>
+	</field>
+	<field name="value" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_response"/>
+	</field>
+	<field name="name" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_response"/>
+	</field>
+	<field name="sum" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="sum"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="217">
+			<bar3DChart>
+				<chart evaluationTime="Report">
+					<reportElement x="290" y="8" width="215" height="200" uuid="d543aa10-86e7-4dc9-b5d0-eac67e1f2781"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset resetType="Report"/>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{name}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{value}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{sum}]]></valueExpression>
+						<labelExpression><![CDATA[$F{value}]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</bar3DChart>
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement x="20" y="8" width="200" height="200" uuid="2fe9e056-ad21-44f9-8fe7-1652da6aa4b0"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<dataset resetType="Report"/>
+					<keyExpression><![CDATA[$F{name}]]></keyExpression>
+					<valueExpression><![CDATA[$F{sum}]]></valueExpression>
+					<labelExpression><![CDATA[$F{sum}+""]]></labelExpression>
+				</pieDataset>
+				<piePlot>
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+			<line>
+				<reportElement x="250" y="13" width="1" height="191" uuid="4fd0369b-d96e-45bb-b48b-230839cc6d60"/>
+			</line>
+		</band>
+	</columnHeader>
+</jasperReport>
