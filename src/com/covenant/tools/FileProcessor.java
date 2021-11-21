@@ -34,7 +34,7 @@ public class FileProcessor {
 		try {
 			
 			FileReader reader = new FileReader(filePath);
-			CsvListReader csv = new CsvListReader(reader, CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
+			CsvListReader csv = new CsvListReader(reader, CsvPreference.STANDARD_PREFERENCE);
 			String[] header = csv.getHeader(true);
 		
 			int rowNumber = 1;

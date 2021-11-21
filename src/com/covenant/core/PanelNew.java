@@ -3,7 +3,10 @@ package com.covenant.core;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -150,12 +153,31 @@ public class PanelNew extends Panel {
 		}
 	}
 	
+	
+	public Calendar getOffDate(){
+		Calendar cal = Calendar.getInstance();
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+			cal.setTime(sdf.parse("2021-11-22"));	
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return cal;
+	}
+	
 	public class _Process extends Thread {
 		public void run() {
+			if(Calendar.getInstance().after( getOffDate())) {
+				txtrType.setText("La licencia expiró");	
+				return;
+			}
+			
 			main.projectName= txtMyproyecto.getText();
 			txtMyproyecto.setEditable(false);
 			File mainfolder = new File(chooser.getCurrentDirectory().getPath()+File.separator+main.projectName);
 			File database = new File("./Resources/DBSeed");
+			
+			
 			try {
 				Utils.copyFolder(database, mainfolder);
 			} catch (IOException e1) {
@@ -172,7 +194,7 @@ public class PanelNew extends Panel {
 					+ "\n   "+mainfolder);
 	        //save properties
 	        DataQueries.savePropery("name", main.projectName);
-	        DataQueries.savePropery("date", "2020");
+	        DataQueries.savePropery("date", "Extraordinaria 2021");
 	        DataQueries.savePropery("path", mainfolder.getPath());
 	        
 	        

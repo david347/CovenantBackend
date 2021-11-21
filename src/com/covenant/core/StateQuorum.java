@@ -25,8 +25,6 @@ public class StateQuorum extends State{
 		String opt = code_.substring(code_.length()-1, code_.length());
 		String ref = code_.substring(0, code_.length()-1);
 		
-		
-		
 		if(main.containsUserByRef(ref))
 			return;
 		

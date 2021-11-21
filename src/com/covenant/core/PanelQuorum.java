@@ -38,6 +38,8 @@ import com.covenant.Utils.Utils;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import java.awt.Color;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 
 public class PanelQuorum {
 
@@ -45,6 +47,7 @@ public class PanelQuorum {
 	private JFrame frmCovenant;
 	private JTextField textField;
 	JLabel lblNewLabel;
+	JTextArea textArea;
 	private Panel panel;
 	private PanelNew menu;
 	private PanelAssist PAssist;
@@ -56,6 +59,7 @@ public class PanelQuorum {
 	public String projectName;
 	private JButton btnVotaciones;
 	private List<User> users;
+	private JScrollPane scrollPane;
 	
 	/**
 	 * Launch the application.
@@ -143,6 +147,8 @@ public class PanelQuorum {
 				changePanel(poll);
 			}
 		});
+		
+		scrollPane = new JScrollPane();
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -151,17 +157,22 @@ public class PanelQuorum {
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 173, GroupLayout.PREFERRED_SIZE)
 						.addGroup(gl_panel.createSequentialGroup()
-							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-								.addGroup(gl_panel.createSequentialGroup()
-									.addComponent(lblUltimaVotacion, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
-								.addComponent(panel_1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-							.addGap(18)
 							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE))))
-					.addGap(35))
+								.addGroup(gl_panel.createSequentialGroup()
+									.addComponent(lblUltimaVotacion, GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+									.addGap(45))
+								.addGroup(gl_panel.createSequentialGroup()
+									.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addGap(18)))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+								.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 309, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)))
+					.addGap(6))
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -172,18 +183,24 @@ public class PanelQuorum {
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblUltimaVotacion)
 						.addComponent(lblNewLabel))
-					.addGap(11)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGap(16))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
-							.addComponent(btnVotaciones)
+						.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnNewButton)
+							.addGap(16))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addContainerGap())))
 		);
+		
+		textArea = new JTextArea();
+		textArea.setForeground(Color.GRAY);
+		textArea.setFont(new Font("Monospaced", Font.BOLD, 18));
+		scrollPane.setViewportView(textArea);
 		panel_1.setLayout(null);
 		panel.setLayout(gl_panel);
 		panel.setVisible(true);
@@ -291,12 +308,10 @@ public class PanelQuorum {
 	}
 
 	public void addUser(User user) {
-		if(user!=null)
+		if(user!=null) {
 			users.add(user);
+			textArea.setText(textArea.getText()+user.getRef()+" - "+user.getName()+"\n");
+		}
 		
 	}
-	
-	
-	
-	
 }

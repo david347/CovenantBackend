@@ -17,7 +17,6 @@ public class PDFGenerator {
 	static HashMap  hm = null;
 	public static void process(String output, String jasperName, String fileName) {
 		try {
-			   System.out.println("Start ....");
 			   // Get jasper report
 			   String jrxmlFileName = "./Resources/Jasper/"+jasperName+".jrxml";
 			   String jasperFileName = "./Resources/Jasper/"+jasperName+".jasper";
@@ -35,10 +34,11 @@ public class PDFGenerator {
 			   // Export pdf file
 			   JasperExportManager.exportReportToPdfFile(jprint, pdfFileName);
 			   
-			   System.out.println("Done exporting reports to pdf");
+			   System.out.println(String.format("... Done, exported report %s to pdf",fileName));
 			   
 			  } catch (Exception e) {
-			   System.out.print("Exceptiion" + e);
+				  System.out.print("Exception" + e);
+				  e.printStackTrace();
 			  }
 	}
 }

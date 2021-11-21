@@ -38,6 +38,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 
 public class PanelPoll extends Panel{
 	private JTextField textField;
@@ -71,6 +73,7 @@ public class PanelPoll extends Panel{
 	private JLabel lblD;
 	private JPanel panelOptions;
 	private JLabel lblInfo;
+	private JTextArea txtrK;
 	
 	public PanelPoll(PanelQuorum main) {
 		this.main = main;
@@ -87,6 +90,12 @@ public class PanelPoll extends Panel{
 		lblPregunta.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		textField = new JTextField();
+		textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				updateQuestionLabel(textField.getText());
+			}
+		});
 		textField.setBounds(10, 44, 159, 20);
 		panelOptions.add(textField);
 		
@@ -202,20 +211,22 @@ public class PanelPoll extends Panel{
 		});
 		textField_1.setColumns(10);
 		
-		lblInfo = new JLabel("New label");
+		lblInfo = new JLabel("-");
+		
+		JScrollPane scrollPane = new JScrollPane();
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(10)
-							.addComponent(panelDrow, GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+								.addComponent(panelDrow, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(panelOptions, GroupLayout.PREFERRED_SIZE, 207, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblInfo, GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)))
+						.addComponent(lblInfo, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -223,12 +234,23 @@ public class PanelPoll extends Panel{
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(11)
 					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addComponent(panelOptions, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(panelDrow, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+							.addGap(7)
+							.addComponent(panelDrow, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+						.addComponent(panelOptions, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblInfo)
 					.addGap(24))
 		);
+		
+		txtrK = new JTextArea();
+		txtrK.setEditable(false);
+		scrollPane.setViewportView(txtrK);
+		txtrK.setText("k");
+		txtrK.setFont(new Font("Calibri", Font.BOLD, 40));
+		txtrK.setLineWrap(true);
+		txtrK.setWrapStyleWord(true);
 		
 		JButton btnSalir = new JButton("Reportes");
 		btnSalir.addActionListener(new ActionListener() {
@@ -429,7 +451,8 @@ public class PanelPoll extends Panel{
 		g.setFont(new Font("Arial", Font.BOLD, (int)(w*dFont)));
 		g.drawString(Utils.getRounded(size*100) + "%", (int)(dx*w+w/20), (int)(h-h/10f));
 		g.drawString(name , (int)(dx*w+w/18), (int)(h-h/5f));
-		g.drawString(getQuestion(), (int)(0), (int)(b/2));
+		// g.drawString(getQuestion(), (int)(0), (int)(b/2));
+		updateQuestionLabel();
 		g.setColor(color);
 				
 	}
@@ -552,5 +575,20 @@ public class PanelPoll extends Panel{
 
 	public void setQuestion(String question) {
 		this.question = question;
+		updateQuestionLabel();
+	}
+	
+	public void updateQuestionLabel(String text) {
+		float h=this.getWidth();
+		float b = h/6f;//borde superior
+		int fontSizeReductor = (int)Math.abs(Math.log((float)text.length()/50f)/Math.log(4f))+1;
+		System.out.println(fontSizeReductor);
+		System.out.println(Math.log((float)text.length()/70f)/Math.log(2f));
+		txtrK.setFont(new Font("Calibri", Font.BOLD, 35/fontSizeReductor));
+		txtrK.setText(text);
+	}
+	
+	public void updateQuestionLabel() {
+		updateQuestionLabel(question);
 	}
 }
