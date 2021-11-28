@@ -40,9 +40,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+import java.awt.GridLayout;
 
 public class PanelPoll extends Panel{
-	private JTextField textField;
+	JTextArea textArea;
+	int fontSize =20;
 	JComboBox comboBox;
 	int actual_question_id=0;
 	JButton btnIniciar;
@@ -51,7 +53,7 @@ public class PanelPoll extends Panel{
 	PanelQuorum main;
 	List<Response> responces =new ArrayList<Response>();
 	JLabel lblB;
-	
+	Color mainColor =new Color(180,180,180);
 	private JTextField textField_1;
 	private enum QType{
 		SN,
@@ -73,7 +75,7 @@ public class PanelPoll extends Panel{
 	private JLabel lblD;
 	private JPanel panelOptions;
 	private JLabel lblInfo;
-	private JTextArea txtrK;
+	private JButton btnNewButton_2;
 	
 	public PanelPoll(PanelQuorum main) {
 		this.main = main;
@@ -83,23 +85,6 @@ public class PanelPoll extends Panel{
 		
 		panelOptions = new JPanel();
 		panelOptions.setLayout(null);
-		
-		JLabel lblPregunta = new JLabel("Pregunta :");
-		lblPregunta.setBounds(10, 11, 51, 14);
-		panelOptions.add(lblPregunta);
-		lblPregunta.setHorizontalAlignment(SwingConstants.RIGHT);
-		
-		textField = new JTextField();
-		textField.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				updateQuestionLabel(textField.getText());
-			}
-		});
-		textField.setBounds(10, 44, 159, 20);
-		panelOptions.add(textField);
-		
-		textField.setColumns(10);
 		
 		comboBox = new JComboBox();
 		comboBox.addMouseListener(new MouseAdapter() {
@@ -222,11 +207,11 @@ public class PanelPoll extends Panel{
 					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-								.addComponent(panelDrow, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+								.addComponent(panelDrow, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(panelOptions, GroupLayout.PREFERRED_SIZE, 207, GroupLayout.PREFERRED_SIZE))
-						.addComponent(lblInfo, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+						.addComponent(lblInfo, GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -235,22 +220,45 @@ public class PanelPoll extends Panel{
 					.addGap(11)
 					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-							.addGap(7)
-							.addComponent(panelDrow, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(panelDrow, GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
 						.addComponent(panelOptions, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblInfo)
 					.addGap(24))
 		);
 		
-		txtrK = new JTextArea();
-		txtrK.setEditable(false);
-		scrollPane.setViewportView(txtrK);
-		txtrK.setText("k");
-		txtrK.setFont(new Font("Calibri", Font.BOLD, 40));
-		txtrK.setLineWrap(true);
-		txtrK.setWrapStyleWord(true);
+		JLabel lblPregunta = new JLabel("Pregunta :");
+		lblPregunta.setFont(new Font("Calibri", Font.BOLD, 20));
+		scrollPane.setColumnHeaderView(lblPregunta);
+		lblPregunta.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		JPanel panel = new JPanel();
+		scrollPane.setRowHeaderView(panel);
+		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JButton btnNewButton = new JButton("+");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textArea.setFont(new Font("Calibri", Font.BOLD, ++fontSize));
+			}
+		});
+		panel.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("-");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textArea.setFont(new Font("Calibri", Font.BOLD, --fontSize));
+			}
+		});
+		panel.add(btnNewButton_1);
+		
+		textArea = new JTextArea();
+		textArea.setFont(new Font("Calibri", Font.BOLD, 20));
+		textArea.setRows(3);
+		textArea.setLineWrap(true);
+		scrollPane.setViewportView(textArea);
 		
 		JButton btnSalir = new JButton("Reportes");
 		btnSalir.addActionListener(new ActionListener() {
@@ -260,10 +268,19 @@ public class PanelPoll extends Panel{
 		});
 		btnSalir.setBounds(71, 245, 98, 23);
 		panelOptions.add(btnSalir);
+		
+		btnNewButton_2 = new JButton("?");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblInfo.setText(DataQueries.getMissed(actual_question_id));
+			}
+		});
+		btnNewButton_2.setBounds(154, 346, 43, 23);
+		panelOptions.add(btnNewButton_2);
 		setLayout(groupLayout);
 		btnIniciar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				textField.setEditable(false);
+				textArea.setEditable(false);
 				btnIniciar.setEnabled(false);
 				btnTerminar.setEnabled(true);
 				setResOptions(false, false, false, false);
@@ -278,8 +295,8 @@ public class PanelPoll extends Panel{
 					type=QType.ABCD;
 				}
 				
-				setQuestion(textField.getText());
-				String SQL = "INSERT INTO cvn_question(name,type) VALUES ('"+textField.getText()+"','"+type.toString()+"')";
+				setQuestion(textArea.getText());
+				String SQL = "INSERT INTO cvn_question(name,type) VALUES ('"+textArea.getText()+"','"+type.toString()+"')";
 				System.out.println(DataBase.get().execute(SQL));
 				String SQLq = "SELECT cvn_question_id FROM cvn_question order by  cvn_question_id desc ";
 				ResultSet rs = DataBase.get().executeQuery(SQLq);
@@ -336,7 +353,7 @@ public class PanelPoll extends Panel{
 		});
 		btnTerminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				textField.setEditable(true);
+				textArea.setEditable(true);
 				btnIniciar.setEnabled(true);
 				btnTerminar.setEnabled(false);
 				
@@ -357,7 +374,9 @@ public class PanelPoll extends Panel{
 		}else if(type == QType.ABCD){
 			paintABCD();
 		}
-		
+		paintText(panelDrow, 0.02f, 0.07f, mainColor, "Totales: ");
+		paintText(panelDrow, 0.15f, 0.07f, mainColor, "Coeficiente "+ Utils.getAsPer(DataQueries.getCff(actual_question_id)));
+		paintText(panelDrow, 0.45f, 0.07f, mainColor, "Quorum "+ Utils.getAsPer(DataQueries.getCff(actual_question_id)/main.getQuorum()));
 	}
 
 
@@ -365,41 +384,50 @@ public class PanelPoll extends Panel{
 		return actual_question_id;
 	}
 
-	private Response filterByValue(List<Response> res, String value) {
+	private Response filterByValue(String value) {
+		List<Response> responses = DataQueries.getResponseByQuestionID(actual_question_id);
 		final String value_ =value;
-		return res.stream().filter(r -> r.getValue().equals(value_)).collect(Collectors.toList()).get(0);
+		return responses.stream().filter(r -> r.getValue().equals(value_)).collect(Collectors.toList()).get(0);
 	}
 	
 	public void paintAB() {
-		List<Response> responses = DataQueries.getResponseByQuestionID(actual_question_id);
-		paintBar(panelDrow, (1f/3f), 0, (DataQueries.getCff("A",actual_question_id)),true,"green","A. "+filterByValue(responses, "A").getName());
-		paintBar(panelDrow, (2f/3f), 0, (DataQueries.getCff("B",actual_question_id)),false,"blue","B. "+filterByValue(responses, "B").getName());
+		Float cffA = DataQueries.getCff("A",actual_question_id);
+		Float cffB = DataQueries.getCff("B",actual_question_id);
+		paintBar(panelDrow, (1f/3f), 0, (cffA/main.getQuorum()),true,"green","A. "+filterByValue("A").getName(), Utils.getAsPer(cffA));
+		paintBar(panelDrow, (2f/3f), 0, (cffB/main.getQuorum()),false,"blue","B. "+filterByValue("B").getName(), Utils.getAsPer(cffB));
 	}
 	
 	public void paintABC() {
-		List<Response> responses = DataQueries.getResponseByQuestionID(actual_question_id);
-		paintBar(panelDrow, (1f/4f), 0, (DataQueries.getCff("A",actual_question_id)),true,"green", "A. "+filterByValue(responses, "A").getName());
-		paintBar(panelDrow, (2f/4f), 0, (DataQueries.getCff("B",actual_question_id)),false,"red","B. "+filterByValue(responses, "B").getName());
-		paintBar(panelDrow, (3f/4f), 0, (DataQueries.getCff("C",actual_question_id)),false,"blue","C. "+filterByValue(responses, "C").getName());
+		Float cffA = DataQueries.getCff("A",actual_question_id);
+		Float cffB = DataQueries.getCff("B",actual_question_id);
+		Float cffC = DataQueries.getCff("C",actual_question_id);
+		paintBar(panelDrow, (1f/4f), 0, (cffA/main.getQuorum()),true,"green", "A. "+filterByValue("A").getName(),Utils.getAsPer(cffA));
+		paintBar(panelDrow, (2f/4f), 0, (cffB/main.getQuorum()),false,"red","B. "+filterByValue("B").getName(),Utils.getAsPer(cffB));
+		paintBar(panelDrow, (3f/4f), 0, (cffC/main.getQuorum()),false,"blue","C. "+filterByValue("C").getName(),Utils.getAsPer(cffC));
 	}
 	
 	public void paintABCD() {
-		List<Response> responses = DataQueries.getResponseByQuestionID(actual_question_id);
-		paintBar(panelDrow, (1f/5f), 0, (DataQueries.getCff("A",actual_question_id)),true,"green","A. "+filterByValue(responses, "A").getName());
-		paintBar(panelDrow, (2f/5f), 0, (DataQueries.getCff("B",actual_question_id)),false, "red","B. "+filterByValue(responses, "B").getName());
-		paintBar(panelDrow, (3f/5f), 0, (DataQueries.getCff("C",actual_question_id)),false, "blue","C. "+filterByValue(responses, "C").getName());
-		paintBar(panelDrow, (4f/5f), 0, (DataQueries.getCff("D",actual_question_id)),false,"purple","D. "+filterByValue(responses, "D").getName());
+		Float cffA = DataQueries.getCff("A",actual_question_id);
+		Float cffB = DataQueries.getCff("B",actual_question_id);
+		Float cffC = DataQueries.getCff("C",actual_question_id);
+		Float cffD = DataQueries.getCff("D",actual_question_id);
+		paintBar(panelDrow, (1f/5f), 0, (cffA/main.getQuorum()),true,"green","A. "+filterByValue("A").getName(),Utils.getAsPer(cffA));
+		paintBar(panelDrow, (2f/5f), 0, (cffB/main.getQuorum()),false, "red","B. "+filterByValue("B").getName(),Utils.getAsPer(cffB));
+		paintBar(panelDrow, (3f/5f), 0, (cffC/main.getQuorum()),false, "blue","C. "+filterByValue("C").getName(),Utils.getAsPer(cffC));
+		paintBar(panelDrow, (4f/5f), 0, (cffD/main.getQuorum()),false,"purple","D. "+filterByValue("D").getName(),Utils.getAsPer(cffD));
 	}
 	
 	public void paintSN() {
-		paintBar(panelDrow, (1f/3f), 0, (DataQueries.getCff("SI",actual_question_id)),true,"green","SI");
-		paintBar(panelDrow, (2f/3f), 0, (DataQueries.getCff("NO",actual_question_id)),false,"red","NO");
+		Float cffSi = DataQueries.getCff("SI",actual_question_id);
+		Float cffNo = DataQueries.getCff("NO",actual_question_id);
+		paintBar(panelDrow, (1f/3f), 0, (cffSi/main.getQuorum()),true,"green","SI",Utils.getAsPer(cffSi));
+		paintBar(panelDrow, (2f/3f), 0, (cffNo/main.getQuorum()),false,"red","NO",Utils.getAsPer(cffNo));
 	}
 	
 	
 	
 	
-	public void paintBar(JPanel panel, float dx, float dy, float size, boolean clear, String bar_color, String name) {
+	public void paintBar(JPanel panel, float dx, float dy, float size, boolean clear, String bar_color, String name, String text) {
 		
 		float dFont=0.03f;
 		Color color = panel.getGraphics().getColor();
@@ -416,30 +444,26 @@ public class PanelPoll extends Panel{
 		//progress bar
 		float b = h/7f;//borde superior
 		float l = h/20f;//borde inferior
-		float pixel =size*(h-b-l);
+		float barSize =size*(h-b-l);
 		
 		BufferedImage image;
 		try {
 			image = ImageIO.read(new File("./Resources/Images/"+bar_color+"Bar.png"));
 			g.drawImage(image,
 					(int)(dx*w), 
-					(int)(b+(h-b-l)*(1-size)), 
+					(int)(h-l-barSize), 
 					(int)(0.18f*w), 
-					(int)(pixel),null);
+					(int)(barSize),null);
 		}catch(Exception e) {
 			g.fillRect(
 					(int)(dx*w), 
-					(int)(b+(h-b-l)*(1-size)), 
+					(int)(h-l-barSize), 
 					(int)(0.18f*w), 
-					(int)(pixel));	
+					(int)(barSize));	
 			e.printStackTrace();
 		}
 		
-		
-		System.out.println("pixel " +pixel);
-		
-		
-		g.setColor(Color.black);
+		g.setColor(Color.BLACK);
 		//border
 		g.drawRect(
 			(int)(dx*w), 
@@ -449,11 +473,25 @@ public class PanelPoll extends Panel{
 		
 		//text 1-100%
 		g.setFont(new Font("Arial", Font.BOLD, (int)(w*dFont)));
-		g.drawString(Utils.getRounded(size*100) + "%", (int)(dx*w+w/20), (int)(h-h/10f));
+		g.drawString(text, (int)(dx*w+w/20), (int)(h-h/10f));
 		g.drawString(name , (int)(dx*w+w/18), (int)(h-h/5f));
 		// g.drawString(getQuestion(), (int)(0), (int)(b/2));
-		updateQuestionLabel();
 		g.setColor(color);
+				
+	}
+	
+	public void paintText(JPanel panel, float x, float y, Color textColor, String text) {
+		float dFont=0.03f;
+		Color basecolor = panel.getGraphics().getColor();
+		Graphics g =panel.getGraphics(); 
+		
+		float w=panel.getWidth();
+		float h=panel.getHeight();
+		
+		g.setColor(textColor);
+		g.setFont(new Font("Arial", Font.BOLD, (int)(w*dFont)));
+		g.drawString(text, (int)(x*w), (int)(y*h));
+		g.setColor(basecolor);
 				
 	}
 	
@@ -478,6 +516,12 @@ public class PanelPoll extends Panel{
 	private void doScan() {
 		int user_id=0;
 		int length =textField_1.getText().length();
+		
+		if(length==0) {
+			refreshPanelDraw();
+			return;
+		}
+		
 		String ref_id = textField_1.getText().substring(0,length-1);
 		String code=  textField_1.getText().substring(length-1,length);
 		
@@ -575,20 +619,5 @@ public class PanelPoll extends Panel{
 
 	public void setQuestion(String question) {
 		this.question = question;
-		updateQuestionLabel();
-	}
-	
-	public void updateQuestionLabel(String text) {
-		float h=this.getWidth();
-		float b = h/6f;//borde superior
-		int fontSizeReductor = (int)Math.abs(Math.log((float)text.length()/50f)/Math.log(4f))+1;
-		System.out.println(fontSizeReductor);
-		System.out.println(Math.log((float)text.length()/70f)/Math.log(2f));
-		txtrK.setFont(new Font("Calibri", Font.BOLD, 35/fontSizeReductor));
-		txtrK.setText(text);
-	}
-	
-	public void updateQuestionLabel() {
-		updateQuestionLabel(question);
 	}
 }

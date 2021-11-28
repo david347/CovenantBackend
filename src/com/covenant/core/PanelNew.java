@@ -3,6 +3,8 @@ package com.covenant.core;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,6 +29,7 @@ import com.covenant.Utils.Utils;
 import com.covenant.tools.BarCodeGenerator;
 import com.covenant.tools.FileProcessor;
 import com.covenant.tools.PDFGenerator;
+import javax.swing.JScrollPane;
 
 public class PanelNew extends Panel {
 	JFileChooser chooser;
@@ -80,11 +83,11 @@ public class PanelNew extends Panel {
 			    btnGenerarVoletas.setVisible(true);
 			}
 		});
-		btnNewButton.setBounds(254, 45, 172, 23);
+		btnNewButton.setBounds(529, 45, 172, 23);
 		add(btnNewButton);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(10, 133, 430, 9);
+		separator.setBounds(10, 133, 509, 9);
 		add(separator);
 		
 		btnGenerarVoletas = new JButton("Crear Proyecto");
@@ -95,43 +98,37 @@ public class PanelNew extends Panel {
 		        process.start();
 			}
 		});
-		btnGenerarVoletas.setBounds(254, 79, 172, 23);
+		btnGenerarVoletas.setBounds(529, 79, 172, 23);
 		btnGenerarVoletas.setVisible(false);
 		add(btnGenerarVoletas);
 		
 		JLabel lblSeleccionaLosDatos = new JLabel("Selecciona los Datos");
 		lblSeleccionaLosDatos.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblSeleccionaLosDatos.setBounds(10, 49, 234, 14);
+		lblSeleccionaLosDatos.setBounds(285, 49, 234, 14);
 		add(lblSeleccionaLosDatos);
 		
 		lblNewLabel = new JLabel("<-->");
 		lblNewLabel.setForeground(Color.GRAY);
 		lblNewLabel.setFont(new Font("Tahoma", Font.ITALIC, 10));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(10, 108, 416, 14);
+		lblNewLabel.setBounds(10, 108, 509, 14);
 		add(lblNewLabel);
 		
 		JLabel lblNewLabel_2 = new JLabel("Nombre del Proyecto:");
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_2.setBounds(10, 20, 234, 14);
+		lblNewLabel_2.setBounds(285, 20, 234, 14);
 		add(lblNewLabel_2);
 		
 		txtMyproyecto = new JTextField();
 		txtMyproyecto.setText("MiProyecto");
-		txtMyproyecto.setBounds(254, 17, 172, 20);
+		txtMyproyecto.setBounds(529, 17, 172, 20);
 		add(txtMyproyecto);
 		txtMyproyecto.setColumns(10);
 		
 		JButton btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new goBack());
-		btnCancelar.setBounds(331, 222, 95, 23);
+		btnCancelar.setBounds(606, 222, 95, 23);
 		add(btnCancelar);
-		
-		txtrType = new JTextArea();
-		txtrType.setFont(new Font("Consolas", Font.PLAIN, 10));
-		txtrType.setBackground(UIManager.getColor("Button.background"));
-		txtrType.setBounds(20, 153, 224, 92);
-		add(txtrType);
 		
 		btnIniciar = new JButton("Iniciar");
 		btnIniciar.addActionListener(new ActionListener() {
@@ -139,9 +136,18 @@ public class PanelNew extends Panel {
 				goPow();
 			}
 		});
-		btnIniciar.setBounds(254, 153, 172, 44);
+		btnIniciar.setBounds(529, 153, 172, 44);
 		btnIniciar.setVisible(false);
 		add(btnIniciar);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(32, 153, 487, 133);
+		add(scrollPane);
+		
+		txtrType = new JTextArea();
+		scrollPane.setViewportView(txtrType);
+		txtrType.setFont(new Font("Consolas", Font.PLAIN, 10));
+		txtrType.setBackground(UIManager.getColor("Button.background"));
 		
 		
 	}
@@ -158,7 +164,7 @@ public class PanelNew extends Panel {
 		Calendar cal = Calendar.getInstance();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-			cal.setTime(sdf.parse("2021-11-22"));	
+			cal.setTime(sdf.parse("2021-11-29"));	
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -176,13 +182,16 @@ public class PanelNew extends Panel {
 			txtMyproyecto.setEditable(false);
 			File mainfolder = new File(chooser.getCurrentDirectory().getPath()+File.separator+main.projectName);
 			File database = new File("./Resources/DBSeed");
-			
-			
 			try {
 				Utils.copyFolder(database, mainfolder);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 				txtrType.setText(e1.getMessage());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+
+				txtrType.setText(e.getMessage());
+				e.printStackTrace();
 			}
 			
 			txtrType.setText(txtrType.getText()+"\n"+"Generando datos...");
@@ -192,19 +201,34 @@ public class PanelNew extends Panel {
 	        txtrType.setText(txtrType.getText()+"\n"+result);
 	        txtrType.setText(txtrType.getText()+"\nProyecto <"+ main.projectName+ "> creado exitosamente"
 					+ "\n   "+mainfolder);
+
 	        //save properties
-	        DataQueries.savePropery("name", main.projectName);
-	        DataQueries.savePropery("date", "Extraordinaria 2021");
-	        DataQueries.savePropery("path", mainfolder.getPath());
-	        
+	        try {
+		        DataQueries.savePropery("name", main.projectName);
+		        DataQueries.savePropery("date", "28/11/2021");
+		        DataQueries.savePropery("path", mainfolder.getPath());
+				
+			} catch (Exception e) {
+				txtrType.setText(txtrType.getText()+"\n"+e.getMessage());
+			}
 	        
 	        //Generate BarCodes
-	        BarCodeGenerator.generate(mainfolder.getPath()+File.separator+"BarCodes");
-	        txtrType.setText(txtrType.getText()+"\n"+"Codigos de Barras Generados...");
+	        try {
+	        	BarCodeGenerator.generate(mainfolder.getPath()+File.separator+"BarCodes");	
+			} catch (Exception e) {
+				txtrType.setText(txtrType.getText()+"\n"+e.getMessage());
+			}
+	        
+	        
 	        //Generar PDFs
-	        PDFGenerator.process(mainfolder.getPath(),"Blank_8","Ballots");
-	        txtrType.setText(txtrType.getText()+"\n"+"PDF generado para impresion en:"
-	        		+ "\n   "+mainfolder+File.separator+"Ballots.pdf");
+	        try {
+	        	PDFGenerator.process(mainfolder.getPath(),"Blank_8","Ballots", this.getClass());
+		        txtrType.setText(txtrType.getText()+"\n"+"PDF generado para impresion en:"
+		        		+ "\n   "+mainfolder+File.separator+"Ballots.pdf");	
+			} catch (Exception e) {
+				txtrType.setText(txtrType.getText()+"\n"+e.getMessage());
+			}
+	        
 	        btnIniciar.setVisible(true);
 	        
 	        

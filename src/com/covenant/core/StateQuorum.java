@@ -31,15 +31,10 @@ public class StateQuorum extends State{
 		
 		User user = DataQueries.getUserByRef(ref+"");
 		try {
-			float cff=0f;
 			if(user !=null) {
-				cff = user.getCff();
-				counter+=cff;
-				main.addUser(user);
-				DataQueries.addPresence(user,"IN");
+				counter+=main.addUser(user);;
 			}
-			main.quorum(counter);
-			main.setData(ref,cff);
+			main.drawQuorum(counter);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

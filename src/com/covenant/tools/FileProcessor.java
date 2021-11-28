@@ -2,6 +2,8 @@ package com.covenant.tools;
 
 import java.io.File;
 import java.io.FileReader;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -44,7 +46,10 @@ public class FileProcessor {
 				String SQL = " INSERT INTO cvn_user(ref_id,name, coefficient) VALUES (";
 				
 				SQL+="'"+row.get(0)+"'"+",";
-				SQL+="'"+row.get(1)+"'"+",";
+				ByteBuffer buffer = StandardCharsets.ISO_8859_1.encode((String)row.get(1)); 
+
+				String fixedName = StandardCharsets.UTF_8.decode(buffer).toString();
+				SQL+="'"+fixedName+"'"+",";
 				SQL+=row.get(2).toString().replace(",", ".");
 				
 				SQL+=")";

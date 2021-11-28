@@ -44,10 +44,13 @@ public class PanelAssist extends Panel{
 		btnTerminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String path = DataQueries.getPropery("path");
-				PDFGenerator.process(path,"Report2","Resultados");
-				PDFGenerator.process(path,"Detailed","Detalle");
-				PDFGenerator.process(path,"Assist","Asistencia");
-				
+				try {
+					PDFGenerator.process(path,"Report2","Resultados", this.getClass());
+					PDFGenerator.process(path,"Detailed","Detalle", this.getClass());
+					PDFGenerator.process(path,"Assist","Asistencia", this.getClass());
+				}catch(Exception err) {
+					System.out.println(err.getMessage());
+				}
 			}
 		});
 		btnTerminar.setBounds(59, 123, 89, 23);

@@ -33,6 +33,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.covenant.Pojo.User;
+import com.covenant.Utils.DataQueries;
 import com.covenant.Utils.Utils;
 
 import javax.swing.JPanel;
@@ -55,7 +56,6 @@ public class PanelQuorum {
 	private JPanel panel_1;
 	private PanelPoll poll;
 	private State state;
-	public static HashMap<String,Float> Data =new HashMap<String,Float>();
 	public String projectName;
 	private JButton btnVotaciones;
 	private List<User> users;
@@ -94,7 +94,7 @@ public class PanelQuorum {
 		frmCovenant = new JFrame();
 		
 		frmCovenant.setTitle("Covenant");
-		frmCovenant.setBounds(100, 100, 450, 300);
+		frmCovenant.setBounds(100, 100, 750, 500);
 		frmCovenant.getContentPane().setLayout(new BorderLayout());
 		frmCovenant.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -106,7 +106,6 @@ public class PanelQuorum {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(KeyEvent.VK_ENTER == e.getKeyCode()) {
-					System.out.println("Enter");
 					drawBar(10, 50, 0.5f);
 					String code=textField.getText();
 					String opt = code.substring(code.length()-1, code.length());
@@ -159,18 +158,17 @@ public class PanelQuorum {
 						.addGroup(gl_panel.createSequentialGroup()
 							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_panel.createSequentialGroup()
-									.addComponent(lblUltimaVotacion, GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+									.addComponent(lblUltimaVotacion, GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
-									.addGap(45))
+									.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+									.addGap(114))
 								.addGroup(gl_panel.createSequentialGroup()
-									.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
 									.addGap(18)))
-							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
 								.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
 								.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
-								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 309, GroupLayout.PREFERRED_SIZE))
+								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED)))
 					.addGap(6))
 		);
@@ -185,7 +183,7 @@ public class PanelQuorum {
 						.addComponent(lblNewLabel))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
+						.addGroup(gl_panel.createSequentialGroup()
 							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
@@ -242,7 +240,7 @@ public class PanelQuorum {
 
 
 
-	public void quorum(float total) {
+	public void drawQuorum(float total) {
 		
 		Color color = panel_1.getGraphics().getColor();
 		//panel_1.getGraphics().fillRect(0, 0, panel_1.getWidth(), panel_1.getHeight());
@@ -294,10 +292,6 @@ public class PanelQuorum {
 		g.setColor(color);
 	}
 
-	public void setData(String ref, float cff) {
-		Data.put(ref, cff);
-		
-	}
 
 	public boolean containsUserByRef(String ref) {
 		try {
@@ -306,12 +300,22 @@ public class PanelQuorum {
 			return false;
 		}
 	}
-
-	public void addUser(User user) {
-		if(user!=null) {
-			users.add(user);
-			textArea.setText(textArea.getText()+user.getRef()+" - "+user.getName()+"\n");
+	
+	public float getQuorum() {
+		try {
+			return users.stream().reduce(0f, (partialResult, elm ) -> partialResult + elm.getCff(), (a, b) -> a+b)/100f;
+		}catch (Exception e) {
+			return 0f;
 		}
-		
+	}
+
+	public float addUser(User user) {
+		if(user!=null && !(containsUserByRef(user.getRef()))) {
+			users.add(user);
+			DataQueries.addPresence(user,"IN");
+			textArea.setText(textArea.getText()+user.getRef()+" - "+user.getName()+"\n");
+			return user.getCff();
+		}
+		return 0f;
 	}
 }

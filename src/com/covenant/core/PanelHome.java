@@ -89,7 +89,7 @@ public class PanelHome extends Panel{
 		lblInfo.setBounds(70, 178, 187, 14);
 		lblInfo.setVisible(false);
 		
-		setBounds(267, 174, 460, 286);
+		setBounds(267, 174, 836, 435);
 		add(lblInfo);
 		
 		try {
