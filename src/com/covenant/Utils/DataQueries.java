@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.covenant.Pojo.Question;
 import com.covenant.Pojo.Response;
 import com.covenant.Pojo.User;
 
@@ -12,6 +13,21 @@ public class DataQueries {
 
 	public static User getUserByRef(String ref_id) {
 		ResultSet rs = DataBase.get().executeQuery("SELECT * FROM cvn_user WHERE ref_id = '"+ref_id+"'");
+		if(rs==null)return null;
+		try {
+			if(rs.next()) {
+				return  new User(rs.getInt("cvn_user_id"), rs.getString("ref_id"), rs.getString("name"), rs.getFloat("coefficient"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static User getUserById(String cvn_user_id) {
+		ResultSet rs = DataBase.get().executeQuery("SELECT * FROM cvn_user WHERE cvn_user_id = "+cvn_user_id+"");
 		if(rs==null)return null;
 		try {
 			if(rs.next()) {
@@ -94,8 +110,8 @@ public class DataQueries {
 		ResultSet rs_a = DataBase.get().executeQuery(SQL);
 		String users="";
 		try {
-			if(rs_a.next()) {
-				users+= rs_a.getString("ref_id")+",";
+			while(rs_a.next()) {
+				users+= rs_a.getString("ref_id")+", ";
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -106,6 +122,42 @@ public class DataQueries {
 	}
 	
 	
+	public static Question getQuestion(int question_id) {
+		String SQL= "select * from cvn_question where cvn_question_id ="+question_id;
+				
+		ResultSet rs = DataBase.get().executeQuery(SQL);
+		try {
+			if(rs.next()) {
+				Question aux = new Question(rs.getInt("cvn_question_id"), rs.getInt("client_id"), rs.getString("name"), rs.getString("type"), rs.getInt("cvn_poll_id"));
+				aux.setResponses(getResponseByQuestionID(aux.getCvn_question_id()));
+				return aux;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	
+	public static List<Question> getAllQuestion() {
+		List<Question> res = new ArrayList<Question>();
+		String SQL= "select * from cvn_question ";
+				
+		ResultSet rs = DataBase.get().executeQuery(SQL);
+		try {
+			while(rs.next()) {
+				Question aux = new Question(rs.getInt("cvn_question_id"), rs.getInt("client_id"), rs.getString("name"), rs.getString("type"), rs.getInt("cvn_poll_id"));
+				aux.setResponses(getResponseByQuestionID(aux.getCvn_question_id()));
+				res.add(aux);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
+		
+	}
 	
 	public static List<Response> getResponseByQuestionID(int question_id) {
 		List<Response> res = new ArrayList<Response>();
@@ -128,5 +180,20 @@ public class DataQueries {
 	public static void addPresence(User user, String value) {
 		String SQL =  "insert into presence (cvn_user_id,value) values('"+user.getID()+"','"+value+"')";
 		DataBase.get().execute(SQL);
+	}
+	
+	public static List<User> getAllPresence(String value) {
+		String SQL =  "select cvn_user_id from presence where value = '"+value+"'";
+		ResultSet rs = DataBase.get().executeQuery(SQL);
+		List<User> res =  new ArrayList<User>();
+		try {
+			while(rs.next()) {
+				res.add(getUserById(rs.getInt("cvn_user_id")+""));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
 	}
 }

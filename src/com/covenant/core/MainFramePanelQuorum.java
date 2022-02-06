@@ -42,7 +42,7 @@ import java.awt.Color;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 
-public class PanelQuorum {
+public class MainFramePanelQuorum {
 
 
 	private JFrame frmCovenant;
@@ -52,13 +52,14 @@ public class PanelQuorum {
 	private Panel panel;
 	private PanelNew menu;
 	private PanelAssist PAssist;
+	private PanelNewQuestion pNewQuestion;
 	private PanelHome home;
 	private JPanel panel_1;
 	private PanelPoll poll;
 	private State state;
 	public String projectName;
 	private JButton btnVotaciones;
-	private List<User> users;
+	public List<User> users;
 	private JScrollPane scrollPane;
 	
 	/**
@@ -68,7 +69,7 @@ public class PanelQuorum {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					PanelQuorum window = new PanelQuorum();
+					MainFramePanelQuorum window = new MainFramePanelQuorum();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -81,7 +82,7 @@ public class PanelQuorum {
 	/**
 	 * Create the application.
 	 */
-	public PanelQuorum() {
+	public MainFramePanelQuorum() {
 		state = new StateQuorum(this);
 		users=new ArrayList<User>();
 		initialize();
@@ -108,7 +109,6 @@ public class PanelQuorum {
 				if(KeyEvent.VK_ENTER == e.getKeyCode()) {
 					drawBar(10, 50, 0.5f);
 					String code=textField.getText();
-					String opt = code.substring(code.length()-1, code.length());
 					String ref = code.substring(0, code.length()-1);
 					state.handle(code);
 					lblNewLabel.setText(ref);
@@ -134,6 +134,8 @@ public class PanelQuorum {
 		menu =  new PanelNew(this);
 		home =  new PanelHome(this);
 		PAssist = new PanelAssist(this);
+
+		pNewQuestion = new PanelNewQuestion(this, poll);
 		frmCovenant.getContentPane().add(home, BorderLayout.CENTER);
 		
 		panel_1 = new JPanel();
@@ -143,7 +145,7 @@ public class PanelQuorum {
 		btnVotaciones = new JButton("Votar");
 		btnVotaciones.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				changePanel(poll);
+				toPoll();
 			}
 		});
 		
@@ -216,21 +218,27 @@ public class PanelQuorum {
 
 	public void Back() {
 		changePanel(home);
-		
 	}
 	
-	public void Pow() {
-		changePanel(panel);
-		
+	public void toQuorum() {
+		changePanel(panel);	
 	}
 
-	public void assist() {
+	public void toNewQuestion() {
+		changePanel(pNewQuestion);	
+	}
+	
+	public void toAssist() {
 		changePanel(PAssist);
 	}
 
-	public void New() {
+	public void toNewProject() {
 		changePanel(menu);
-		
+	}
+	
+	public void toPoll() {
+		changePanel(poll);
+		poll.init();
 	}
 	
 	

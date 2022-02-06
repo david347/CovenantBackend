@@ -40,7 +40,7 @@ public class PanelNew extends Panel {
 	JButton btnGenerarVoletas;
 	JButton btnIniciar;
 	JTextArea txtrType;
-	PanelQuorum main;
+	MainFramePanelQuorum main;
 	
 	private JTextField txtMyproyecto;
 	
@@ -49,7 +49,7 @@ public class PanelNew extends Panel {
 	 * Create the panel.
 	 * @param main 
 	 */
-	public PanelNew(PanelQuorum main) {
+	public PanelNew(MainFramePanelQuorum main) {
 		this.main = main;
 		setLayout(null);
 		
@@ -164,7 +164,7 @@ public class PanelNew extends Panel {
 		Calendar cal = Calendar.getInstance();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-			cal.setTime(sdf.parse("2021-11-29"));	
+			cal.setTime(sdf.parse("2022-11-29"));	
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -205,7 +205,7 @@ public class PanelNew extends Panel {
 	        //save properties
 	        try {
 		        DataQueries.savePropery("name", main.projectName);
-		        DataQueries.savePropery("date", "28/11/2021");
+		        DataQueries.savePropery("date", "06/02/2022");
 		        DataQueries.savePropery("path", mainfolder.getPath());
 				
 			} catch (Exception e) {
@@ -236,6 +236,6 @@ public class PanelNew extends Panel {
 	}
 	
 	public void goPow(){
-		main.Pow();
+		main.toQuorum();
 	}
 }

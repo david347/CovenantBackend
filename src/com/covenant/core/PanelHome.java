@@ -5,6 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
 import com.covenant.Utils.DataBase;
+import com.covenant.Utils.DataQueries;
 import com.covenant.Utils.PropertiesManager;
 
 import java.awt.event.ActionListener;
@@ -17,7 +18,7 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 
 public class PanelHome extends Panel{
-	PanelQuorum main;
+	MainFramePanelQuorum main;
 	PropertiesManager properties;
 	String lastProjectPath = "";
 	private JLabel lblInfo;
@@ -52,11 +53,11 @@ public class PanelHome extends Panel{
 	public class goNew implements ActionListener{
 		
 		public void actionPerformed(ActionEvent e) {
-	    		main.New();
+	    		main.toNewProject();
 		}
 	}
 	
-	public PanelHome(PanelQuorum main) {
+	public PanelHome(MainFramePanelQuorum main) {
 		
 		
 		this.main = main;
@@ -117,7 +118,8 @@ public class PanelHome extends Panel{
     	if(localDB.exists()) {
     		lastProjectPath= path;
     		DataBase.create(localDB.getPath());
-    		main.Pow();
+    		main.users.addAll(DataQueries.getAllPresence("IN"));
+    		main.toQuorum();
     		properties.setProperty("last", path);
     		
     		try {

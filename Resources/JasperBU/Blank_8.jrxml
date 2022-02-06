@@ -213,7 +213,7 @@ FROM cvn_user]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
+					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["-"+$F{projectname}+"-"+ (($F{projectname}.toString().length()<28)?"\n":" ")+"ASAMBLEA "+$F{date}]]></textFieldExpression>
 			</textField>

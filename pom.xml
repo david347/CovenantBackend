@@ -23,12 +23,12 @@
 		    <artifactId>javase</artifactId>
 		    <version>3.3.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
 		<dependency>
 		    <groupId>net.sf.jasperreports</groupId>
 		    <artifactId>jasperreports</artifactId>
-		    <version>6.11.0</version>
+		    <version>6.18.1</version>
 		</dependency>
-		
 	</dependencies>
 	<build>
 		<plugins>

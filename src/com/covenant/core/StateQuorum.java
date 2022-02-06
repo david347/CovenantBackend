@@ -11,11 +11,11 @@ import com.covenant.Utils.DataQueries;
 
 public class StateQuorum extends State{
 
-	PanelQuorum main;
-	float counter=0f;
+	MainFramePanelQuorum main;
 	
 	
-	public StateQuorum(PanelQuorum main) {
+	
+	public StateQuorum(MainFramePanelQuorum main) {
 		this.main = main;
 		
 	}
@@ -25,16 +25,19 @@ public class StateQuorum extends State{
 		String opt = code_.substring(code_.length()-1, code_.length());
 		String ref = code_.substring(0, code_.length()-1);
 		
-		if(main.containsUserByRef(ref))
-			return;
+		if(main.containsUserByRef(ref)) {
+			main.drawQuorum(main.users.size());
+			return;	
+		}
+			
 		
 		
 		User user = DataQueries.getUserByRef(ref+"");
 		try {
 			if(user !=null) {
-				counter+=main.addUser(user);;
+				main.addUser(user);;
 			}
-			main.drawQuorum(counter);
+			main.drawQuorum(main.users.size());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

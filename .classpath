@@ -7,9 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="Resources/Images"/>
-	<classpathentry kind="src" path="Resources/Jasper"/>
-	<classpathentry kind="src" path="Resources/DBSeed"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

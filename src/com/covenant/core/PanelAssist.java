@@ -16,9 +16,9 @@ import java.awt.event.KeyEvent;
 
 public class PanelAssist extends Panel{
 	private JTextField textField;
-	PanelQuorum main;
+	MainFramePanelQuorum main;
 	
-	public PanelAssist(PanelQuorum main) {
+	public PanelAssist(MainFramePanelQuorum main) {
 		this.main = main;
 		setLayout(null);
 		
@@ -49,6 +49,7 @@ public class PanelAssist extends Panel{
 					PDFGenerator.process(path,"Detailed","Detalle", this.getClass());
 					PDFGenerator.process(path,"Assist","Asistencia", this.getClass());
 				}catch(Exception err) {
+					err.printStackTrace();
 					System.out.println(err.getMessage());
 				}
 			}

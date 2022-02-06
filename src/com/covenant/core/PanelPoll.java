@@ -10,6 +10,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import com.covenant.Pojo.Question;
 import com.covenant.Pojo.Response;
 import com.covenant.Utils.DataBase;
 import com.covenant.Utils.DataQueries;
@@ -45,140 +46,56 @@ import java.awt.GridLayout;
 public class PanelPoll extends Panel{
 	JTextArea textArea;
 	int fontSize =20;
-	JComboBox comboBox;
-	int actual_question_id=0;
+	int actualQuestionIndex=0;
+	Question actualQuestion;
 	JButton btnIniciar;
 	JButton btnTerminar;
 	JPanel panelDrow;
-	PanelQuorum main;
-	List<Response> responces =new ArrayList<Response>();
-	JLabel lblB;
-	Color mainColor =new Color(180,180,180);
+	MainFramePanelQuorum main;
+	boolean isMouseOver =false;
+	// public List<Response> responses =new ArrayList<Response>();
+	Color mainColor =new Color(150,150,150);
 	private JTextField textField_1;
-	private enum QType{
+	public enum QType{
 		SN,
 		AB,
 		ABC,
 		ABCD
 	}
-	QType type;
 	
 	String question; 
-	
-
-	private JTextField textField_A;
-	private JTextField textField_B;
-	private JTextField textField_D;
-	private JTextField textField_C;
-	private JLabel lblA;
-	private JLabel lblC;
-	private JLabel lblD;
 	private JPanel panelOptions;
 	private JLabel lblInfo;
 	private JButton btnNewButton_2;
+	private JButton btnNewButton;
+	private JButton btnNewButton_1;
+	private JLabel lblQuestionId;
 	
-	public PanelPoll(PanelQuorum main) {
+	public PanelPoll(MainFramePanelQuorum main) {
 		this.main = main;
 		
+
 		panelDrow = new JPanel();
+		panelDrow.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				isMouseOver = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				isMouseOver = false;
+			}
+		});
 		panelDrow.setBackground(Color.WHITE);
 		
 		panelOptions = new JPanel();
 		panelOptions.setLayout(null);
 		
-		comboBox = new JComboBox();
-		comboBox.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				if(comboBox.getSelectedIndex()==0) {
-					type=QType.SN;
-					setResOptions(false, false, false, false);
-				}else				
-				if(comboBox.getSelectedIndex()==1) {
-					type=QType.AB;
-					setResOptions(true, true, false, false);
-				}else
-				if(comboBox.getSelectedIndex()==2) {
-					type=QType.ABC;
-					setResOptions(true, true, true, false);
-				}else
-				if(comboBox.getSelectedIndex()==3) {
-					type=QType.ABCD;
-					setResOptions(true, true, true, true);
-				}		
-			}
-		});
-		
-		comboBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
-				
-				if(comboBox.getSelectedIndex()==0) {
-					type=QType.SN;
-					setResOptions(false, false, false, false);
-				}else				
-				if(comboBox.getSelectedIndex()==1) {
-					type=QType.AB;
-					setResOptions(true, true, false, false);
-				}else
-				if(comboBox.getSelectedIndex()==2) {
-					type=QType.ABC;
-					setResOptions(true, true, true, false);
-				}else
-				if(comboBox.getSelectedIndex()==3) {
-					type=QType.ABCD;
-					setResOptions(true, true, true, true);
-				}
-			}
-		});
-		comboBox.setBounds(102, 8, 67, 20);
-		panelOptions.add(comboBox);
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"SI/NO", "AB","ABC","ABCD"}));
-		
-		textField_A = new JTextField();
-		textField_A.setBounds(50, 75, 119, 20);
-		panelOptions.add(textField_A);
-		textField_A.setColumns(10);
-		
-		lblA = new JLabel("A");
-		lblA.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblA.setBounds(10, 75, 30, 20);
-		panelOptions.add(lblA);
-		
-		textField_B = new JTextField();
-		textField_B.setColumns(10);
-		textField_B.setBounds(50, 106, 119, 20);
-		panelOptions.add(textField_B);
-		
-		lblB = new JLabel("B");
-		lblB.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblB.setBounds(10, 106, 30, 20);
-		panelOptions.add(lblB);
-		
 		btnTerminar = new JButton("Terminar");
 		btnTerminar.setBounds(71, 222, 98, 23);
 		panelOptions.add(btnTerminar);
 		
-		textField_D = new JTextField();
-		textField_D.setColumns(10);
-		textField_D.setBounds(50, 168, 119, 20);
-		panelOptions.add(textField_D);
-		
-		textField_C = new JTextField();
-		textField_C.setColumns(10);
-		textField_C.setBounds(50, 137, 119, 20);
-		panelOptions.add(textField_C);
-		
-		lblC = new JLabel("C");
-		lblC.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblC.setBounds(10, 137, 30, 20);
-		panelOptions.add(lblC);
-		
-		lblD = new JLabel("D");
-		lblD.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblD.setBounds(10, 168, 30, 20);
-		panelOptions.add(lblD);
-		
-		btnIniciar = new JButton("Iniciar");
+		btnIniciar = new JButton("Iniciar - NQ");
 		btnIniciar.setBounds(71, 199, 98, 23);
 		panelOptions.add(btnIniciar);
 		
@@ -207,10 +124,10 @@ public class PanelPoll extends Panel{
 					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
-								.addComponent(panelDrow, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(panelOptions, GroupLayout.PREFERRED_SIZE, 207, GroupLayout.PREFERRED_SIZE))
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
+								.addComponent(panelDrow, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(panelOptions, GroupLayout.PREFERRED_SIZE, 182, GroupLayout.PREFERRED_SIZE))
 						.addComponent(lblInfo, GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE))
 					.addContainerGap())
 		);
@@ -218,12 +135,12 @@ public class PanelPoll extends Panel{
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(11)
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(panelDrow, GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
-						.addComponent(panelOptions, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+							.addComponent(panelDrow, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE))
+						.addComponent(panelOptions, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblInfo)
 					.addGap(24))
@@ -238,22 +155,6 @@ public class PanelPoll extends Panel{
 		scrollPane.setRowHeaderView(panel);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
 		
-		JButton btnNewButton = new JButton("+");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				textArea.setFont(new Font("Calibri", Font.BOLD, ++fontSize));
-			}
-		});
-		panel.add(btnNewButton);
-		
-		JButton btnNewButton_1 = new JButton("-");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				textArea.setFont(new Font("Calibri", Font.BOLD, --fontSize));
-			}
-		});
-		panel.add(btnNewButton_1);
-		
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Calibri", Font.BOLD, 20));
 		textArea.setRows(3);
@@ -263,7 +164,7 @@ public class PanelPoll extends Panel{
 		JButton btnSalir = new JButton("Reportes");
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				main.assist();
+				main.toAssist();
 			}
 		});
 		btnSalir.setBounds(71, 245, 98, 23);
@@ -272,83 +173,56 @@ public class PanelPoll extends Panel{
 		btnNewButton_2 = new JButton("?");
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				lblInfo.setText(DataQueries.getMissed(actual_question_id));
+				lblInfo.setText(DataQueries.getMissed(actualQuestion.getCvn_question_id()));
 			}
 		});
-		btnNewButton_2.setBounds(154, 346, 43, 23);
+		btnNewButton_2.setBounds(129, 346, 43, 23);
 		panelOptions.add(btnNewButton_2);
+		
+		btnNewButton = new JButton(">");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<Question> allQuestions = DataQueries.getAllQuestion();
+				if(allQuestions.size() == 0)
+					return;
+				actualQuestionIndex = (actualQuestionIndex+1) % allQuestions.size();
+				actualQuestion = allQuestions.get(actualQuestionIndex);
+
+				refreshPanelDraw();
+			}
+		});
+		btnNewButton.setBounds(139, 11, 43, 23);
+		panelOptions.add(btnNewButton);
+		
+		btnNewButton_1 = new JButton("<");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				List<Question> allQuestions = DataQueries.getAllQuestion();
+				if(allQuestions.size() == 0)
+					return;
+				actualQuestionIndex = (actualQuestionIndex-1);
+				if (actualQuestionIndex<0)
+					actualQuestionIndex= allQuestions.size()-1;
+				actualQuestion = allQuestions.get(actualQuestionIndex);
+				refreshPanelDraw();
+			}
+		});
+		btnNewButton_1.setBounds(10, 11, 51, 23);
+		panelOptions.add(btnNewButton_1);
+		
+		lblQuestionId = new JLabel("-");
+		lblQuestionId.setHorizontalAlignment(SwingConstants.CENTER);
+		lblQuestionId.setBounds(71, 15, 58, 14);
+		panelOptions.add(lblQuestionId);
 		setLayout(groupLayout);
 		btnIniciar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textArea.setEditable(false);
 				btnIniciar.setEnabled(false);
 				btnTerminar.setEnabled(true);
-				setResOptions(false, false, false, false);
-				type=QType.SN;
-				if(comboBox.getSelectedIndex()==1) {
-					type=QType.AB;
-				}
-				if(comboBox.getSelectedIndex()==2) {
-					type=QType.ABC;
-				}
-				if(comboBox.getSelectedIndex()==3) {
-					type=QType.ABCD;
-				}
-				
-				setQuestion(textArea.getText());
-				String SQL = "INSERT INTO cvn_question(name,type) VALUES ('"+textArea.getText()+"','"+type.toString()+"')";
-				System.out.println(DataBase.get().execute(SQL));
-				String SQLq = "SELECT cvn_question_id FROM cvn_question order by  cvn_question_id desc ";
-				ResultSet rs = DataBase.get().executeQuery(SQLq);
-				
-				try {
-					if(rs.next()) {
-						int q_id = rs.getInt("cvn_question_id");
-						setActual_question_id(q_id);
-						
-						
-						if(type == QType.SN) {
-							DataBase.get().execute("INSERT INTO cvn_response(value,name,cvn_question_id) "+
-									" VALUES ('SI','SI',"+q_id+");");
-							
-									
-							DataBase.get().execute(" INSERT INTO cvn_response(value,name,cvn_question_id) "+
-									" VALUES ('NO','NO',"+q_id+");");
-						}
-						
-						if(type == QType.AB || type == QType.ABC ||type == QType.ABCD) {
-							DataBase.get().execute("INSERT INTO cvn_response(value,name,cvn_question_id) "+
-									" VALUES ('A','"+textField_A.getText()+"',"+q_id+");");
-									
-							DataBase.get().execute("INSERT INTO cvn_response(value,name,cvn_question_id) "+
-									"VALUES ('B','"+textField_B.getText()+"',"+q_id+");");
-						} 
-						if(type == QType.ABC || type == QType.ABCD) {
-							DataBase.get().execute("INSERT INTO cvn_response(value,name,cvn_question_id) "+
-									" VALUES ('C','"+textField_C.getText()+"',"+q_id+");");
-						}
-						if(type == QType.ABCD ) {
-							DataBase.get().execute("INSERT INTO cvn_response(value,name,cvn_question_id) "+
-									" VALUES ('D','"+textField_D.getText()+"',"+q_id+");");
-						}
-						
-						
-						
-						String SQL_Res ="SELECT * FROM  cvn_response where cvn_question_id = "+q_id;
-						ResultSet rsRes = DataBase.get().executeQuery(SQL_Res);
-						responces = new ArrayList<Response>();
-						while(rsRes.next()) {
-							
-							responces.add(new Response(rsRes.getInt("cvn_response_id"),rsRes.getString("value"),rsRes.getString("name")));
-						}
-						
-						
-					}
-				} catch (SQLException e1) {
-					
-					e1.printStackTrace();
-				}
-				refreshPanelDraw();
+				main.toNewQuestion();
+				// setResOptions(false, false, false, false);
 			}
 		});
 		btnTerminar.addActionListener(new ActionListener() {
@@ -361,65 +235,111 @@ public class PanelPoll extends Panel{
 				
 			}
 		});
+		
+		
+	}
+	
+	public void init () {
+		List<Question> allQuestions = DataQueries.getAllQuestion();
+		if (allQuestions.size() != 0 && actualQuestionIndex == 0) {
+			actualQuestionIndex= allQuestions.size()-1;
+			actualQuestion = allQuestions.get(actualQuestionIndex);
+		
+		}
+		refreshPanelDraw();
 	}
 
-
+	public void addQuestion() {
+		main.toPoll();
+		textArea.setEditable(false);
+		btnIniciar.setEnabled(false);
+		btnTerminar.setEnabled(true);
+		// setResOptions(false, false, false, false);
+		
+		refreshPanelDraw();
+	}
+	
+	
+	
+	
 	protected void refreshPanelDraw() {
-		if(type == QType.SN) {
-			paintSN();
-		}else if(type == QType.AB){
-			paintAB();
-		}else if(type == QType.ABC){
-			paintABC();
-		}else if(type == QType.ABCD){
-			paintABCD();
+		if (actualQuestion== null)
+			return;
+		textArea.setText(actualQuestion.getName());
+		lblQuestionId.setText(actualQuestion.getCvn_question_id()+"");
+		
+		//panel_1.getGraphics().fillRect(0, 0, panel_1.getWidth(), panel_1.getHeight());
+		refreshTotals();
+		doScan();
+	}
+	
+	public void refreshTotals() {
+		QType type = QType.valueOf(actualQuestion.getType());
+		
+		if(isMouseOver) {
+			Color color = panelDrow.getGraphics().getColor();
+			//panel.getGraphics().fillRect(0, 0, panel.getWidth(), panel.getHeight());
+			Graphics g =panelDrow.getGraphics(); 
+			g.setColor(Color.WHITE);
+			g.fillRect(0, 0,  panelDrow.getWidth(), panelDrow.getHeight());
+			float i =2.0f;
+			for (Response res : actualQuestion.getResponses()) {
+				paintText(panelDrow, 0.02f, 0.07f+i*0.08f, mainColor, res.getValue()+" : "+res.getName());
+				i++;
+			}
+		}else {
+			if(type == QType.SN) {
+				paintSN();
+			}else if(type == QType.AB){
+				paintAB();
+			}else if(type == QType.ABC){
+				paintABC();
+			}else if(type == QType.ABCD){
+				paintABCD();
+			}
 		}
 		paintText(panelDrow, 0.02f, 0.07f, mainColor, "Totales: ");
-		paintText(panelDrow, 0.15f, 0.07f, mainColor, "Coeficiente "+ Utils.getAsPer(DataQueries.getCff(actual_question_id)));
-		paintText(panelDrow, 0.45f, 0.07f, mainColor, "Quorum "+ Utils.getAsPer(DataQueries.getCff(actual_question_id)/main.getQuorum()));
+		paintText(panelDrow, 0.15f, 0.07f, mainColor, "Coeficiente "+ Utils.getAsPer(DataQueries.getCff(actualQuestion.getCvn_question_id())));
+		paintText(panelDrow, 0.45f, 0.07f, mainColor, "Quorum "+ Utils.getAsPer(DataQueries.getCff(actualQuestion.getCvn_question_id())/main.getQuorum()));	
 	}
 
-
-	public int getActual_question_id() {
-		return actual_question_id;
-	}
 
 	private Response filterByValue(String value) {
-		List<Response> responses = DataQueries.getResponseByQuestionID(actual_question_id);
+		List<Response> responses = DataQueries.getResponseByQuestionID(actualQuestion.getCvn_question_id());
 		final String value_ =value;
 		return responses.stream().filter(r -> r.getValue().equals(value_)).collect(Collectors.toList()).get(0);
 	}
 	
 	public void paintAB() {
-		Float cffA = DataQueries.getCff("A",actual_question_id);
-		Float cffB = DataQueries.getCff("B",actual_question_id);
-		paintBar(panelDrow, (1f/3f), 0, (cffA/main.getQuorum()),true,"green","A. "+filterByValue("A").getName(), Utils.getAsPer(cffA));
-		paintBar(panelDrow, (2f/3f), 0, (cffB/main.getQuorum()),false,"blue","B. "+filterByValue("B").getName(), Utils.getAsPer(cffB));
+		Float cffA = DataQueries.getCff("A",actualQuestion.getCvn_question_id());
+		Float cffB = DataQueries.getCff("B",actualQuestion.getCvn_question_id());
+		paintBar(panelDrow, (1f/3f), 0, (cffA/main.getQuorum()),true,"green","A. ", Utils.getAsPer(cffA));
+		paintBar(panelDrow, (2f/3f), 0, (cffB/main.getQuorum()),false,"blue","B. ", Utils.getAsPer(cffB));
 	}
 	
 	public void paintABC() {
-		Float cffA = DataQueries.getCff("A",actual_question_id);
-		Float cffB = DataQueries.getCff("B",actual_question_id);
-		Float cffC = DataQueries.getCff("C",actual_question_id);
-		paintBar(panelDrow, (1f/4f), 0, (cffA/main.getQuorum()),true,"green", "A. "+filterByValue("A").getName(),Utils.getAsPer(cffA));
-		paintBar(panelDrow, (2f/4f), 0, (cffB/main.getQuorum()),false,"red","B. "+filterByValue("B").getName(),Utils.getAsPer(cffB));
-		paintBar(panelDrow, (3f/4f), 0, (cffC/main.getQuorum()),false,"blue","C. "+filterByValue("C").getName(),Utils.getAsPer(cffC));
+		Float cffA = DataQueries.getCff("A",actualQuestion.getCvn_question_id());
+		Float cffB = DataQueries.getCff("B",actualQuestion.getCvn_question_id());
+		Float cffC = DataQueries.getCff("C",actualQuestion.getCvn_question_id());
+		paintBar(panelDrow, (1f/4f), 0, (cffA/main.getQuorum()),true,"green", "A. ",Utils.getAsPer(cffA));
+		paintBar(panelDrow, (2f/4f), 0, (cffB/main.getQuorum()),false,"red","B. ",Utils.getAsPer(cffB));
+		paintBar(panelDrow, (3f/4f), 0, (cffC/main.getQuorum()),false,"blue","C. ",Utils.getAsPer(cffC));
 	}
 	
 	public void paintABCD() {
-		Float cffA = DataQueries.getCff("A",actual_question_id);
-		Float cffB = DataQueries.getCff("B",actual_question_id);
-		Float cffC = DataQueries.getCff("C",actual_question_id);
-		Float cffD = DataQueries.getCff("D",actual_question_id);
-		paintBar(panelDrow, (1f/5f), 0, (cffA/main.getQuorum()),true,"green","A. "+filterByValue("A").getName(),Utils.getAsPer(cffA));
-		paintBar(panelDrow, (2f/5f), 0, (cffB/main.getQuorum()),false, "red","B. "+filterByValue("B").getName(),Utils.getAsPer(cffB));
-		paintBar(panelDrow, (3f/5f), 0, (cffC/main.getQuorum()),false, "blue","C. "+filterByValue("C").getName(),Utils.getAsPer(cffC));
-		paintBar(panelDrow, (4f/5f), 0, (cffD/main.getQuorum()),false,"purple","D. "+filterByValue("D").getName(),Utils.getAsPer(cffD));
+		Float cffA = DataQueries.getCff("A",actualQuestion.getCvn_question_id());
+		Float cffB = DataQueries.getCff("B",actualQuestion.getCvn_question_id());
+		Float cffC = DataQueries.getCff("C",actualQuestion.getCvn_question_id());
+		Float cffD = DataQueries.getCff("D",actualQuestion.getCvn_question_id());
+		paintBar(panelDrow, (1f/5f), 0, (cffA/main.getQuorum()),true,"green","A. ",Utils.getAsPer(cffA));
+		paintBar(panelDrow, (2f/5f), 0, (cffB/main.getQuorum()),false, "red","B. ",Utils.getAsPer(cffB));
+		paintBar(panelDrow, (3f/5f), 0, (cffC/main.getQuorum()),false, "blue","C. ",Utils.getAsPer(cffC));
+		paintBar(panelDrow, (4f/5f), 0, (cffD/main.getQuorum()),false,"purple","D. ",Utils.getAsPer(cffD));
 	}
 	
 	public void paintSN() {
-		Float cffSi = DataQueries.getCff("SI",actual_question_id);
-		Float cffNo = DataQueries.getCff("NO",actual_question_id);
+		Float cffSi = DataQueries.getCff("SI",actualQuestion.getCvn_question_id());
+		Float cffNo = DataQueries.getCff("NO",actualQuestion.getCvn_question_id());
 		paintBar(panelDrow, (1f/3f), 0, (cffSi/main.getQuorum()),true,"green","SI",Utils.getAsPer(cffSi));
 		paintBar(panelDrow, (2f/3f), 0, (cffNo/main.getQuorum()),false,"red","NO",Utils.getAsPer(cffNo));
 	}
@@ -496,53 +416,40 @@ public class PanelPoll extends Panel{
 	}
 	
 
-	public void setActual_question_id(int actual_question_id) {
-		this.actual_question_id = actual_question_id;
+	public void setActualQuestionById(int actual_question_id) {
+		this.actualQuestion = DataQueries.getQuestion(actual_question_id);
 	}
 	
 	private void setResOptions(boolean a, boolean b, boolean c, boolean d) {
 		panelOptions.setVisible(false);
-		lblA.setVisible(a);
-		textField_A.setVisible(a);
-		lblB.setVisible(b);
-		textField_B.setVisible(b);
-		lblC.setVisible(c);
-		textField_C.setVisible(c);
-		lblD.setVisible(d);
-		textField_D.setVisible(d);
 		panelOptions.setVisible(true);
 	}
 	
 	private void doScan() {
 		int user_id=0;
 		int length =textField_1.getText().length();
-		
 		if(length==0) {
-			refreshPanelDraw();
 			return;
 		}
+
+		
 		
 		String ref_id = textField_1.getText().substring(0,length-1);
 		String code=  textField_1.getText().substring(length-1,length);
 		
-		if(code.equals("0")) {
-			lblInfo.setText(ref_id +"> registrando...");
-			main.addUser(DataQueries.getUserByRef(ref_id));
-			refreshPanelDraw();
-			
+		if(!main.containsUserByRef(ref_id)) {
+			if (DataQueries.getUserByRef(ref_id) != null) {
+				lblInfo.setText(ref_id +"> registrando...");
+				main.addUser(DataQueries.getUserByRef(ref_id));
+			}
+//			refreshPanelDraw();
 			textField_1.setText("");
-			return;
-		}else if(!main.containsUserByRef(ref_id)) {
-			lblInfo.setText(ref_id +"> NO REGISTRADO");
-			refreshPanelDraw();
-			textField_1.setText("");
-			return;
 		}else {
 			lblInfo.setText(ref_id +" ");
 		}
 		
 		
-		String response = textField_1.getText().substring(length-1,length);
+		String response = code;
 		String  value = "null";
 		switch (response) {
 			case "1":
@@ -565,26 +472,26 @@ public class PanelPoll extends Panel{
 				break;
 		}
 		//get user id
-		
+		QType type = QType.valueOf(actualQuestion.getType());
 		if(type == QType.SN && (!value.equals("SI") && !value.equals("NO"))) {
-			paintSN();
+			refreshTotals();
 			textField_1.setText("");
 			return;
 		}
 		else
 		if(type == QType.AB && (value !="A" && value !="B")){
 			textField_1.setText("");
-			paintAB();
+			refreshTotals();;
 			return;
 		}
 		else
 		if(type == QType.ABC && (value !="A" && value !="B" && value !="C")) {
-			paintABC();
+			refreshTotals();
 			textField_1.setText("");
 			return;
 		}else
 		if(type == QType.ABCD && (value !="A" && value !="B" && value !="C" && value !="D")) {
-			paintABCD();
+			refreshTotals();
 			textField_1.setText("");
 			return;
 		}
@@ -601,14 +508,17 @@ public class PanelPoll extends Panel{
 		final String  value_ =value;
 		//insert response
 		if(user_id!=0) {
+			String SQL_D = "delete from cvn_res_user where "
+					+ "cvn_user_id = "+user_id
+					+" AND cvn_question_id ="+actualQuestion.getCvn_question_id();
+			DataBase.get().execute(SQL_D);
 			
 			String SQL_I = "insert into cvn_res_user(cvn_user_id,cvn_question_id,cvn_response_id) "
-					+ "VALUES ("+user_id+","+actual_question_id+","+responces.stream().filter(a -> a.getValue().equals(value_)).collect(Collectors.toList()).get(0).getID()+")";
+					+ "VALUES ("+user_id+","+actualQuestion.getCvn_question_id()+","+actualQuestion.getResponses().stream().filter(a -> a.getValue().equals(value_)).collect(Collectors.toList()).get(0).getID()+")";
 			DataBase.get().execute(SQL_I);
 		}
 		
-		refreshPanelDraw();
-		
+		refreshTotals();
 		textField_1.setText("");
 	}
 	
