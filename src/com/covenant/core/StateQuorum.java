@@ -25,19 +25,18 @@ public class StateQuorum extends State{
 		String opt = code_.substring(code_.length()-1, code_.length());
 		String ref = code_.substring(0, code_.length()-1);
 		
+
 		if(main.containsUserByRef(ref)) {
-			main.drawQuorum(main.users.size());
+			main.drawQuorum(main.users.stream().reduce(0f, (acc, elm) -> acc+elm.getCff(), Float::sum));
 			return;	
 		}
-			
-		
 		
 		User user = DataQueries.getUserByRef(ref+"");
 		try {
 			if(user !=null) {
 				main.addUser(user);;
 			}
-			main.drawQuorum(main.users.size());
+			main.drawQuorum(main.users.stream().reduce(0f, (acc, elm) -> acc+elm.getCff(), Float::sum));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

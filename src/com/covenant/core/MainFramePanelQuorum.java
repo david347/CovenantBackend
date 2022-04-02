@@ -12,7 +12,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,13 +61,19 @@ public class MainFramePanelQuorum {
 	private State state;
 	public String projectName;
 	private JButton btnVotaciones;
-	public List<User> users;
 	private JScrollPane scrollPane;
+	public float quorum;
+	public List<User> users;
 	
 	/**
 	 * Launch the application.
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
+		//PrintStream errStream = new PrintStream(new File("errFile.txt"));
+		//System.setErr(errStream);
+		//PrintStream outStream = new PrintStream(new File("outFile.txt"));
+		//System.setOut(outStream);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -83,8 +91,8 @@ public class MainFramePanelQuorum {
 	 * Create the application.
 	 */
 	public MainFramePanelQuorum() {
+		users = new ArrayList<User>();
 		state = new StateQuorum(this);
-		users=new ArrayList<User>();
 		initialize();
 	}
 
@@ -309,21 +317,28 @@ public class MainFramePanelQuorum {
 		}
 	}
 	
-	public float getQuorum() {
+	public void updateUsers() {
 		try {
-			return users.stream().reduce(0f, (partialResult, elm ) -> partialResult + elm.getCff(), (a, b) -> a+b)/100f;
+			users =DataQueries.getAllPresence("IN");
 		}catch (Exception e) {
-			return 0f;
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateQuorum() {
+		try {
+			quorum = users.stream().reduce(0f, (partialResult, elm ) -> partialResult + elm.getCff(), (a, b) -> a+b)/100f;
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
-	public float addUser(User user) {
-		if(user!=null && !(containsUserByRef(user.getRef()))) {
-			users.add(user);
+	public void addUser(User user) {
+		if(user!=null) {
 			DataQueries.addPresence(user,"IN");
+			updateUsers();
+			updateQuorum();
 			textArea.setText(textArea.getText()+user.getRef()+" - "+user.getName()+"\n");
-			return user.getCff();
 		}
-		return 0f;
 	}
 }

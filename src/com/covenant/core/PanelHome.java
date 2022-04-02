@@ -41,6 +41,16 @@ public class PanelHome extends Panel{
 		    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
 		    	
 		    	openProject(chooser.getSelectedFile().getPath());
+		    	try {
+					properties =  new PropertiesManager("./Resources", "project.properties");
+					lastProjectPath=chooser.getSelectedFile().getPath();
+					properties.setProperty("last", lastProjectPath);
+					properties.toGlobal();
+	    			properties.saveProperties();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		    	
 	        }else {
 				lblInfo.setText("No selecciono una carpeta ");
@@ -81,13 +91,13 @@ public class PanelHome extends Panel{
 				openProject(lastProjectPath);
 			}
 		});
-		btnAbrir.setBounds(267, 174, 89, 23);
+		btnAbrir.setBounds(267, 200, 89, 23);
 		add(btnAbrir);
 		btnAbrir.setVisible(false);
 		
 		lblInfo = new JLabel("New label");
-		lblInfo.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblInfo.setBounds(70, 178, 187, 14);
+		lblInfo.setHorizontalAlignment(SwingConstants.LEFT);
+		lblInfo.setBounds(70, 178, 756, 14);
 		lblInfo.setVisible(false);
 		
 		setBounds(267, 174, 836, 435);
@@ -118,7 +128,8 @@ public class PanelHome extends Panel{
     	if(localDB.exists()) {
     		lastProjectPath= path;
     		DataBase.create(localDB.getPath());
-    		main.users.addAll(DataQueries.getAllPresence("IN"));
+    		main.updateUsers();
+    		main.updateQuorum();
     		main.toQuorum();
     		properties.setProperty("last", path);
     		

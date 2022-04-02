@@ -2,67 +2,121 @@
 <!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c68dca60-896c-417c-acbe-cf36c7d665d8">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Final"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SampleDB"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT *
-FROM cvn_question]]>
+		<![CDATA[SELECT q.*,
+(
+select sum(u.coefficient)  from presence p
+	join cvn_user u on p.cvn_user_id = u.cvn_user_id
+	where p.value ='IN'
+) as coeff,
+(
+	select sum(u2.coefficient) from cvn_response  r2
+	join cvn_res_user ru2 on ru2.cvn_response_id = r2.cvn_response_id
+	join cvn_user u2 on ru2.cvn_user_id = u2.cvn_user_id
+	where r2.cvn_question_id= q.cvn_question_id
+	group by r2.cvn_question_id
+) as toatlcoeff
+FROM cvn_question q]]>
 	</queryString>
 	<field name="cvn_question_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="cvn_question_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="cvn_question_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
 	</field>
 	<field name="client_id" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.name" value="client_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="client_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
 	</field>
 	<field name="name" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
 		<property name="com.jaspersoft.studio.field.label" value="name"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
 	</field>
 	<field name="type" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.name" value="type"/>
 		<property name="com.jaspersoft.studio.field.label" value="type"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
 	</field>
 	<field name="cvn_poll_id" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.name" value="cvn_poll_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="cvn_poll_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cvn_question"/>
+	</field>
+	<field name="coeff" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.name" value="coeff"/>
+		<property name="com.jaspersoft.studio.field.label" value="coeff"/>
+	</field>
+	<field name="toatlcoeff" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.name" value="toatlcoeff"/>
+		<property name="com.jaspersoft.studio.field.label" value="toatlcoeff"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="141" splitType="Stretch">
+		<band height="201" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="561" height="81" backcolor="#F0EDED" uuid="ffbfe475-7304-4877-8d7c-d78754e38bbf"/>
+				<reportElement x="0" y="0" width="561" height="80" backcolor="#F0EDED" uuid="ffbfe475-7304-4877-8d7c-d78754e38bbf"/>
 				<graphicElement>
 					<pen lineColor="#B3B3B3"/>
 				</graphicElement>
 			</rectangle>
-			<textField>
-				<reportElement x="10" y="11" width="90" height="61" uuid="16b33c71-66d0-46a2-af8d-9170cad41d57"/>
-				<box>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#999999"/>
-				</box>
-				<textElement>
-					<font size="20"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Pregunta\nNo: "+$F{cvn_question_id}]]></textFieldExpression>
-			</textField>
 			<textField textAdjust="ScaleFont">
-				<reportElement x="110" y="10" width="441" height="66" isPrintWhenDetailOverflows="true" uuid="9ce1d3b4-a99d-45a4-b503-fa491c98cdbd"/>
+				<reportElement stretchType="ContainerHeight" x="8" y="10" width="535" height="66" isPrintWhenDetailOverflows="true" uuid="9ce1d3b4-a99d-45a4-b503-fa491c98cdbd"/>
 				<textElement>
 					<font size="20"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{name}.toString().replace("\n", ", ")]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="4" y="80" width="552" height="50" uuid="8cddf48c-c23a-44b9-a068-57c1772d73ec"/>
-				<subreportParameter name="cvn_question_id">
+				<reportElement x="1" y="140" width="552" height="50" uuid="c0782d7c-0919-40de-ad90-45311a53a8a1"/>
+				<subreportParameter name="cnv_question_id">
+					<subreportParameterExpression><![CDATA[$F{cvn_question_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["QReportG2.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="1" y="91" width="543" height="49" uuid="16b33c71-66d0-46a2-af8d-9170cad41d57"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="17"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{toatlcoeff}!=null?"Resultado por Asistencia Total:\nParticipación: "+String.format("%.2f", (100*$F{toatlcoeff}/$F{coeff})) +"% ,  Abstinencia: "+String.format("%.2f", (100*(1-($F{toatlcoeff}/$F{coeff}))))+"%":"Sin votación"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="154">
+			<line>
+				<reportElement x="-6" y="-1" width="551" height="1" uuid="5a7380de-e499-4155-b37a-63282d5c98a6"/>
+			</line>
+			<subreport>
+				<reportElement x="1" y="48" width="552" height="50" uuid="8cddf48c-c23a-44b9-a068-57c1772d73ec"/>
+				<subreportParameter name="cnv_question_id">
 					<subreportParameterExpression><![CDATA[$F{cvn_question_id}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["QReportG.jasper"]]></subreportExpression>
 			</subreport>
+			<textField>
+				<reportElement x="1" y="9" width="537" height="39" uuid="24cd55c3-f2af-4669-a701-e2154e1b0c1d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="17"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{toatlcoeff}!=null?"Resultado por Coeficiente:":""]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>

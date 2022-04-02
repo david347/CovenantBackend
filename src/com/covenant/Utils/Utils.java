@@ -55,7 +55,7 @@ public class Utils {
     }
 	
 	public static String getRounded(float n) {
-		return String.format("%.2f", n);
+		return String.format("%.1f", n);
 	}
 	
 	public static String getAsPer(float n) {
