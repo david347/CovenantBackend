@@ -164,7 +164,7 @@ public class PanelNew extends Panel {
 		Calendar cal = Calendar.getInstance();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-			cal.setTime(sdf.parse("2022-11-29"));	
+			cal.setTime(sdf.parse("2023-11-29"));	
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -205,7 +205,7 @@ public class PanelNew extends Panel {
 	        //save properties
 	        try {
 		        DataQueries.savePropery("name", main.projectName);
-		        DataQueries.savePropery("date", "03/04/2022");
+		        DataQueries.savePropery("date", "10/04/2022");
 		        DataQueries.savePropery("path", mainfolder.getPath());
 				
 			} catch (Exception e) {

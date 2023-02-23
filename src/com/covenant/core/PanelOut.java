@@ -14,11 +14,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class PanelAssist extends Panel{
+public class PanelOut extends Panel{
 	private JTextField textField;
 	MainFramePanelQuorum main;
 	
-	public PanelAssist(MainFramePanelQuorum main) {
+	public PanelOut(MainFramePanelQuorum main) {
 		this.main = main;
 		setLayout(null);
 		

@@ -128,7 +128,7 @@ FROM cvn_user]]>
 				<text><![CDATA[A]]></text>
 			</staticText>
 			<image>
-				<reportElement x="167" y="144" width="130" height="43" uuid="7945d507-d5ce-4f8d-a0ed-91f06265fe15">
+				<reportElement x="167" y="144" width="130" height="44" uuid="7945d507-d5ce-4f8d-a0ed-91f06265fe15">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<imageExpression><![CDATA[$F{path}+"/BarCodes/"+$F{ref_id}.toString()+"3.png"]]></imageExpression>
@@ -141,7 +141,7 @@ FROM cvn_user]]>
 				<text><![CDATA[B]]></text>
 			</staticText>
 			<image>
-				<reportElement x="327" y="144" width="130" height="43" uuid="78aad473-c01c-4cee-b7c9-87da4c2b7a83">
+				<reportElement x="327" y="144" width="130" height="44" uuid="78aad473-c01c-4cee-b7c9-87da4c2b7a83">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<imageExpression><![CDATA[$F{path}+"/BarCodes/"+$F{ref_id}.toString()+"4.png"]]></imageExpression>
@@ -154,7 +154,7 @@ FROM cvn_user]]>
 				<text><![CDATA[C]]></text>
 			</staticText>
 			<image>
-				<reportElement x="167" y="227" width="130" height="43" uuid="2e5e571f-748d-443e-bbfb-7cdb20007710">
+				<reportElement x="167" y="227" width="130" height="44" uuid="2e5e571f-748d-443e-bbfb-7cdb20007710">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<imageExpression><![CDATA[$F{path}+"/BarCodes/"+$F{ref_id}.toString()+"5.png"]]></imageExpression>
@@ -167,7 +167,7 @@ FROM cvn_user]]>
 				<text><![CDATA[D]]></text>
 			</staticText>
 			<image>
-				<reportElement x="327" y="227" width="130" height="43" uuid="64c42e60-e270-4c57-94b7-0cce9c00ac47">
+				<reportElement x="327" y="227" width="130" height="44" uuid="64c42e60-e270-4c57-94b7-0cce9c00ac47">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<imageExpression><![CDATA[$F{path}+"/BarCodes/"+$F{ref_id}.toString()+"6.png"]]></imageExpression>
@@ -213,7 +213,7 @@ FROM cvn_user]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
+					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["-"+$F{projectname}+"-"+ (($F{projectname}.toString().length()<28)?"\n":" ")+"ASAMBLEA "+$F{date}]]></textFieldExpression>
 			</textField>

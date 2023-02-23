@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="QReportG2" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2a04075e-590c-4b7e-9349-19282daf958d">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="520"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="466"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="330"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="659"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CopyOfmp2"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<parameter name="cnv_question_id" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[select sum(u.coefficient) as sum, r.value as value,
+(select sum(u.coefficient)  from presence p
+	join cvn_user u on p.cvn_user_id = u.cvn_user_id
+	where p.value ='IN'
+) as coeff from cvn_user u
+left join cvn_res_user ru on ru.cvn_user_id = u.cvn_user_id
+left join cvn_response r on ru.cvn_response_id = r.cvn_response_id
+left join cvn_question q on r.cvn_question_id= q.cvn_question_id
+where q.cvn_question_id=$P{cnv_question_id}  
+group by r.value
+union
+select sum(u.coefficient), '.No Votó' as value,
+(select sum(u.coefficient)  from presence p
+	join cvn_user u on p.cvn_user_id = u.cvn_user_id
+	where p.value ='IN'
+) as coeff
+from cvn_user u
+join presence p on p.cvn_user_id = u.cvn_user_id
+where p.value ='IN'
+and u.cvn_user_id not in (
+select u.cvn_user_id from cvn_user u
+left join cvn_res_user ru on ru.cvn_user_id = u.cvn_user_id
+left join cvn_response r on ru.cvn_response_id = r.cvn_response_id
+left join cvn_question q on r.cvn_question_id= q.cvn_question_id
+where q.cvn_question_id=$P{cnv_question_id}  
+)
+order by r.value]]>
+	</queryString>
+	<field name="sum" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.name" value="sum"/>
+		<property name="com.jaspersoft.studio.field.label" value="sum"/>
+	</field>
+	<field name="value" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+	</field>
+	<field name="coeff" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.name" value="coeff"/>
+		<property name="com.jaspersoft.studio.field.label" value="coeff"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="217">
+			<bar3DChart>
+				<chart evaluationTime="Report">
+					<reportElement x="270" y="8" width="275" height="200" uuid="fa342663-8ae7-4012-a39b-f3a0a28b6492"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset resetType="Report"/>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{value}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{value}]]></categoryExpression>
+						<valueExpression><![CDATA[($F{sum})]]></valueExpression>
+						<labelExpression><![CDATA[String.format("%.2f",(100f*$F{sum}/$F{coeff}))+"%"]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</bar3DChart>
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement x="20" y="8" width="200" height="200" uuid="3acc17c1-02b3-4ccc-91e1-6e6b5171ccc3"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<dataset resetType="Report"/>
+					<keyExpression><![CDATA[$F{value}]]></keyExpression>
+					<valueExpression><![CDATA[$F{sum}]]></valueExpression>
+					<labelExpression><![CDATA[String.format("%.2f",(100f*$F{sum}/$F{coeff}))+"%"]]></labelExpression>
+				</pieDataset>
+				<piePlot>
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+			<line>
+				<reportElement x="250" y="13" width="1" height="191" uuid="4fd0369b-d96e-45bb-b48b-230839cc6d60"/>
+			</line>
+		</band>
+	</columnHeader>
+</jasperReport>

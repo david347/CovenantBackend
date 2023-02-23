@@ -75,7 +75,7 @@ public class PanelPoll extends Panel{
 	private JButton btnNewButton_1;
 	private JLabel lblQuestionId;
 	
-	public PanelPoll(MainFramePanelQuorum main) {
+	public PanelPoll(final MainFramePanelQuorum main) {
 		this.main = main;
 		
 		panelOptions = new JPanel();
@@ -279,7 +279,7 @@ public class PanelPoll extends Panel{
 	
 	public void refreshTotals() {
 		QType type = QType.valueOf(actualQuestion.getType());
-		
+		main.cffQ = DataQueries.getCff(actualQuestion.getCvn_question_id());
 		if(isMouseOver) {
 			Color color = panelDrow.getGraphics().getColor();
 			//panel.getGraphics().fillRect(0, 0, panel.getWidth(), panel.getHeight());
@@ -302,34 +302,34 @@ public class PanelPoll extends Panel{
 				paintABCD();
 			}
 		}
-		paintText(panelDrow, 0.02f, 0.07f, mainColor, "Totales: ", 0.02f);
-		paintText(panelDrow, 0.15f, 0.07f, mainColor, "Quorum Actual "+ Utils.getAsPer(DataQueries.getCff(actualQuestion.getCvn_question_id())), 0.02f);
-		paintText(panelDrow, 0.45f, 0.07f, mainColor,
-				" ("+ Utils.getAsPer(DataQueries.getCff(actualQuestion.getCvn_question_id())/main.quorum)
-				+" del Los Asistentes:"+ Utils.getAsPer(main.quorum)+" )", 0.02f);	
+		float fontSize = 0.015f;
+		
+		paintText(panelDrow, 0.02f, 0.04f, mainColor, "Quorum Total:  "+  Utils.getAsPer(main.quorum), fontSize);
+		paintText(panelDrow, 0.02f, 0.08f, mainColor, "Quorum Actual: "+ Utils.getAsPer(main.cffQ), fontSize);
+		paintText(panelDrow, 0.02f, 0.12f, mainColor, "Participación: "+ Utils.getAsPer(main.cffQ/main.quorum), fontSize);	
 	}
 
 
 	private Response filterByValue(String value) {
 		List<Response> responses = DataQueries.getResponseByQuestionID(actualQuestion.getCvn_question_id());
 		final String value_ =value;
-		return responses.stream().filter(r -> r.getValue().equals(value_)).collect(Collectors.toList()).get(0);
+		return (Response) responses.stream().filter(r -> r.getValue().equals(value_)).collect(Collectors.toList()).get(0);
 	}
 	
 	public void paintAB() {
 		Float cffA = DataQueries.getCff("A",actualQuestion.getCvn_question_id());
 		Float cffB = DataQueries.getCff("B",actualQuestion.getCvn_question_id());
-		paintBar(panelDrow, (1f/3f), 0, (cffA/main.quorum),true,"green","A. ", Utils.getAsPer(cffA)+"("+Utils.getAsPer(cffA/main.quorum)+")");
-		paintBar(panelDrow, (2f/3f), 0, (cffB/main.quorum),false,"blue","B. ", Utils.getAsPer(cffB)+"("+Utils.getAsPer(cffB/main.quorum)+")");
+		paintBar(panelDrow, (1f/3f), 0, (cffA/main.cffQ),true,"green","A. ", Utils.getAsPer(cffA)+"("+Utils.getAsPer(cffA/main.cffQ)+")");
+		paintBar(panelDrow, (2f/3f), 0, (cffB/main.cffQ),false,"blue","B. ", Utils.getAsPer(cffB)+"("+Utils.getAsPer(cffB/main.cffQ)+")");
 	}
 	
 	public void paintABC() {
 		Float cffA = DataQueries.getCff("A",actualQuestion.getCvn_question_id());
 		Float cffB = DataQueries.getCff("B",actualQuestion.getCvn_question_id());
 		Float cffC = DataQueries.getCff("C",actualQuestion.getCvn_question_id());
-		paintBar(panelDrow, (1f/4f), 0, (cffA/main.quorum),true,"green", "A. ",Utils.getAsPer(cffA)+"("+Utils.getAsPer(cffA/main.quorum)+")");
-		paintBar(panelDrow, (2f/4f), 0, (cffB/main.quorum),false,"red","B. ",Utils.getAsPer(cffB)+"("+Utils.getAsPer(cffB/main.quorum)+")");
-		paintBar(panelDrow, (3f/4f), 0, (cffC/main.quorum),false,"blue","C. ",Utils.getAsPer(cffC)+"("+Utils.getAsPer(cffC/main.quorum)+")");
+		paintBar(panelDrow, (1f/4f), 0, (cffA/main.cffQ),true,"green", "A. ",Utils.getAsPer(cffA)+"("+Utils.getAsPer(cffA/main.cffQ)+")");
+		paintBar(panelDrow, (2f/4f), 0, (cffB/main.cffQ),false,"red","B. ",Utils.getAsPer(cffB)+"("+Utils.getAsPer(cffB/main.cffQ)+")");
+		paintBar(panelDrow, (3f/4f), 0, (cffC/main.cffQ),false,"blue","C. ",Utils.getAsPer(cffC)+"("+Utils.getAsPer(cffC/main.cffQ)+")");
 	}
 	
 	public void paintABCD() {
@@ -337,17 +337,17 @@ public class PanelPoll extends Panel{
 		Float cffB = DataQueries.getCff("B",actualQuestion.getCvn_question_id());
 		Float cffC = DataQueries.getCff("C",actualQuestion.getCvn_question_id());
 		Float cffD = DataQueries.getCff("D",actualQuestion.getCvn_question_id());
-		paintBar(panelDrow, (1f/5f), 0, (cffA/main.quorum),true,"green","A. ",Utils.getAsPer(cffA)+"("+Utils.getAsPer(cffA/main.quorum)+")");
-		paintBar(panelDrow, (2f/5f), 0, (cffB/main.quorum),false, "red","B. ",Utils.getAsPer(cffB)+"("+Utils.getAsPer(cffB/main.quorum)+")");
-		paintBar(panelDrow, (3f/5f), 0, (cffC/main.quorum),false, "blue","C. ",Utils.getAsPer(cffC)+"("+Utils.getAsPer(cffC/main.quorum)+")");
-		paintBar(panelDrow, (4f/5f), 0, (cffD/main.quorum),false,"purple","D. ",Utils.getAsPer(cffD)+"("+Utils.getAsPer(cffD/main.quorum)+")");
+		paintBar(panelDrow, (1f/5f), 0, (cffA/main.cffQ),true,"green","A. ",Utils.getAsPer(cffA)+"("+Utils.getAsPer(cffA/main.cffQ)+")");
+		paintBar(panelDrow, (2f/5f), 0, (cffB/main.cffQ),false, "red","B. ",Utils.getAsPer(cffB)+"("+Utils.getAsPer(cffB/main.cffQ)+")");
+		paintBar(panelDrow, (3f/5f), 0, (cffC/main.cffQ),false, "blue","C. ",Utils.getAsPer(cffC)+"("+Utils.getAsPer(cffC/main.cffQ)+")");
+		paintBar(panelDrow, (4f/5f), 0, (cffD/main.cffQ),false,"purple","D. ",Utils.getAsPer(cffD)+"("+Utils.getAsPer(cffD/main.cffQ)+")");
 	}
 	
 	public void paintSN() {
 		Float cffSi = DataQueries.getCff("SI",actualQuestion.getCvn_question_id());
 		Float cffNo = DataQueries.getCff("NO",actualQuestion.getCvn_question_id());
-		paintBar(panelDrow, (1f/3f), 0, (cffSi/main.quorum),true,"green","SI",Utils.getAsPer(cffSi)+"("+Utils.getAsPer(cffSi/main.quorum)+")");
-		paintBar(panelDrow, (2f/3f), 0, (cffNo/main.quorum),false,"red","NO",Utils.getAsPer(cffNo)+"("+Utils.getAsPer(cffNo/main.quorum)+")");
+		paintBar(panelDrow, (1f/3f), 0, (cffSi/main.cffQ),true,"green","SI",Utils.getAsPer(cffSi)+"("+Utils.getAsPer(cffSi/main.cffQ)+")");
+		paintBar(panelDrow, (2f/3f), 0, (cffNo/main.cffQ),false,"red","NO",Utils.getAsPer(cffNo)+"("+Utils.getAsPer(cffNo/main.cffQ)+")");
 	}
 	
 	

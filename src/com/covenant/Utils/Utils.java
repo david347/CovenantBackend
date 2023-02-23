@@ -59,6 +59,8 @@ public class Utils {
 	}
 	
 	public static String getAsPer(float n) {
+		if(Float.isNaN(n) )
+			return "0%";
 		return getRounded(n*100) + "%";
 	}
 }

@@ -53,7 +53,7 @@ public class MainFramePanelQuorum {
 	JTextArea textArea;
 	private Panel panel;
 	private PanelNew menu;
-	private PanelAssist PAssist;
+	private PanelOut PAssist;
 	private PanelNewQuestion pNewQuestion;
 	private PanelHome home;
 	private JPanel panel_1;
@@ -63,6 +63,7 @@ public class MainFramePanelQuorum {
 	private JButton btnVotaciones;
 	private JScrollPane scrollPane;
 	public float quorum;
+	public float cffQ=0f;
 	public List<User> users;
 	
 	/**
@@ -141,7 +142,7 @@ public class MainFramePanelQuorum {
 		poll = new PanelPoll(this);
 		menu =  new PanelNew(this);
 		home =  new PanelHome(this);
-		PAssist = new PanelAssist(this);
+		PAssist = new PanelOut(this);
 
 		pNewQuestion = new PanelNewQuestion(this, poll);
 		frmCovenant.getContentPane().add(home, BorderLayout.CENTER);
