@@ -205,7 +205,7 @@ public class PanelNew extends Panel {
 	        //save properties
 	        try {
 		        DataQueries.savePropery("name", main.projectName);
-		        DataQueries.savePropery("date", "10/04/2022");
+		        DataQueries.savePropery("date", "Marzo-2023");
 		        DataQueries.savePropery("path", mainfolder.getPath());
 				
 			} catch (Exception e) {

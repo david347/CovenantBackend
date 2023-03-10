@@ -17,6 +17,7 @@ import com.covenant.Utils.DataBase;
 import com.covenant.Utils.DataQueries;
 import com.covenant.Utils.Utils;
 import com.covenant.tools.PDFGenerator;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -42,23 +43,34 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
 import javax.swing.JSplitPane;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import javax.swing.SpringLayout;
+import java.awt.CardLayout;
+import javax.swing.JTextPane;
 
 public class PanelPoll extends Panel{
-	JTextArea textArea;
+	JTextPane textPane;
 	int fontSize =20;
+	int fontSizeQuestion =20;
 	int actualQuestionIndex=0;
 	Question actualQuestion;
 	JButton btnIniciar;
 	JButton btnTerminar;
-	JPanel panelDrow;
 	MainFramePanelQuorum main;
 	boolean isMouseOver =false;
 	// public List<Response> responses =new ArrayList<Response>();
-	Color mainColor =new Color(150,150,150);
+	Color mainColor =new Color(200,200,200);
+	private BufferedImage imageFondo1;
+	
 	private JTextField textField_1;
 	public enum QType{
 		SN,
@@ -74,96 +86,105 @@ public class PanelPoll extends Panel{
 	private JButton btnNewButton;
 	private JButton btnNewButton_1;
 	private JLabel lblQuestionId;
+	private JPanel panelDrow;
 	
 	public PanelPoll(final MainFramePanelQuorum main) {
 		this.main = main;
+		try {
+			imageFondo1 = ImageIO.read(new File("./Resources/Images/fondo1.png"));	
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 		
 		panelOptions = new JPanel();
+		panelOptions.setOpaque(true);
+		panelOptions.addMouseWheelListener(new MouseWheelListener() {
+			public void mouseWheelMoved(MouseWheelEvent arg0) {
+				fontSizeQuestion+=arg0.getWheelRotation();
+				// TODO
+				textPane.setFont(new Font("Arial", Font.BOLD, fontSizeQuestion));
+			}
+		});
+		panelOptions.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				if(!isMouseOver) {
+					isMouseOver = true;
+					textPane.setVisible(true);
+				}
+				refreshPanelDraw();
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if(isMouseOver) {
+					isMouseOver = false;
+					textPane.setVisible(false);
+				}
+				refreshPanelDraw();
+			}
+		});
 		panelOptions.setLayout(null);
 		
-		btnTerminar = new JButton("Terminar");
-		btnTerminar.setBounds(71, 222, 98, 23);
-		panelOptions.add(btnTerminar);
+		lblInfo = new JLabel("-");
+		lblInfo.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblInfo.setBackground(Color.ORANGE);
 		
-		btnIniciar = new JButton("Iniciar - NQ");
-		btnIniciar.setBounds(71, 199, 98, 23);
-		panelOptions.add(btnIniciar);
+		panelDrow = new JPanel();
+		
+		textPane = new JTextPane();
+		textPane.setEditable(false);
+		textPane.setBackground(new Color(205, 222, 248));
+		textPane.setFont(new Font("Calibri", Font.BOLD, fontSizeQuestion));
+
+
+		panelDrow.setBackground(new Color(205, 222, 248));
+		fontSizeQuestion=40;
+		
+		btnNewButton_1 = new JButton("<");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				refreshAllQuestions((actualQuestionIndex-1));
+			}
+		});
+		
+		lblQuestionId = new JLabel("-");
+		lblQuestionId.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		btnNewButton = new JButton(">");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				refreshAllQuestions((actualQuestionIndex+1));
+			}
+		});
 		
 		textField_1 = new JTextField();
-		textField_1.setBounds(10, 200, 51, 20);
-		panelOptions.add(textField_1);
 		textField_1.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(KeyEvent.VK_ENTER == e.getKeyCode()) {
 					doScan();
-					
 				}
 			}
 		});
 		textField_1.setColumns(10);
 		
-		lblInfo = new JLabel("-");
-		
-		JSplitPane splitPane = new JSplitPane();
-		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(splitPane, GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(panelOptions, GroupLayout.PREFERRED_SIZE, 182, GroupLayout.PREFERRED_SIZE))
-						.addComponent(lblInfo, GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE))
-					.addContainerGap())
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(11)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(splitPane, GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
-						.addComponent(panelOptions, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblInfo)
-					.addGap(64))
-		);
-		
-
-		panelDrow = new JPanel();
-		splitPane.setRightComponent(panelDrow);
-		panelDrow.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				isMouseOver = true;
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				isMouseOver = false;
+		btnIniciar = new JButton("Iniciar - NQ");
+		btnIniciar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				main.toNewQuestion();
+				// setResOptions(false, false, false, false);
 			}
 		});
-		panelDrow.setBackground(Color.WHITE);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		splitPane.setLeftComponent(scrollPane);
-		
-		JLabel lblPregunta = new JLabel("Pregunta :");
-		lblPregunta.setFont(new Font("Calibri", Font.BOLD, 20));
-		scrollPane.setColumnHeaderView(lblPregunta);
-		lblPregunta.setHorizontalAlignment(SwingConstants.LEFT);
-		
-		JPanel panel = new JPanel();
-		scrollPane.setRowHeaderView(panel);
-		panel.setLayout(new GridLayout(0, 1, 0, 0));
-		
-		textArea = new JTextArea();
-		textArea.setFont(new Font("Calibri", Font.BOLD, 40));
-		textArea.setRows(3);
-		textArea.setLineWrap(true);
-		scrollPane.setViewportView(textArea);
+		btnTerminar = new JButton("Terminar");
+		btnTerminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				panelDrow.getGraphics().clearRect(0, 0,  panelDrow.getWidth(), panelDrow.getHeight());
+				
+			}
+		});
 		
 		JButton btnSalir = new JButton("Reportes");
 		btnSalir.addActionListener(new ActionListener() {
@@ -171,8 +192,6 @@ public class PanelPoll extends Panel{
 				main.toAssist();
 			}
 		});
-		btnSalir.setBounds(71, 245, 98, 23);
-		panelOptions.add(btnSalir);
 		
 		btnNewButton_2 = new JButton("?");
 		btnNewButton_2.addActionListener(new ActionListener() {
@@ -180,127 +199,147 @@ public class PanelPoll extends Panel{
 				lblInfo.setText(DataQueries.getMissed(actualQuestion.getCvn_question_id()));
 			}
 		});
-		btnNewButton_2.setBounds(129, 346, 43, 23);
-		panelOptions.add(btnNewButton_2);
-		
-		btnNewButton = new JButton(">");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				List<Question> allQuestions = DataQueries.getAllQuestion();
-				if(allQuestions.size() == 0)
-					return;
-				actualQuestionIndex = (actualQuestionIndex+1) % allQuestions.size();
-				actualQuestion = allQuestions.get(actualQuestionIndex);
-
-				refreshPanelDraw();
-			}
-		});
-		btnNewButton.setBounds(139, 11, 43, 23);
-		panelOptions.add(btnNewButton);
-		
-		btnNewButton_1 = new JButton("<");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				List<Question> allQuestions = DataQueries.getAllQuestion();
-				if(allQuestions.size() == 0)
-					return;
-				actualQuestionIndex = (actualQuestionIndex-1);
-				if (actualQuestionIndex<0)
-					actualQuestionIndex= allQuestions.size()-1;
-				actualQuestion = allQuestions.get(actualQuestionIndex);
-				refreshPanelDraw();
-			}
-		});
-		btnNewButton_1.setBounds(10, 11, 51, 23);
-		panelOptions.add(btnNewButton_1);
-		
-		lblQuestionId = new JLabel("-");
-		lblQuestionId.setHorizontalAlignment(SwingConstants.CENTER);
-		lblQuestionId.setBounds(71, 15, 58, 14);
-		panelOptions.add(lblQuestionId);
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(lblInfo, GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+							.addContainerGap())
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addGap(8)
+							.addComponent(panelDrow, GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+									.addGap(18)
+									.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+										.addGroup(groupLayout.createSequentialGroup()
+											.addComponent(panelOptions, 0, 0, Short.MAX_VALUE)
+											.addPreferredGap(ComponentPlacement.RELATED)
+											.addComponent(btnNewButton_2))
+										.addComponent(btnTerminar, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnIniciar, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnSalir, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE))
+									.addGap(23))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnNewButton_1, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
+									.addGap(10)
+									.addComponent(lblQuestionId, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE)
+									.addGap(10)
+									.addComponent(btnNewButton)
+									.addGap(20)))
+							.addGap(5))))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(13)
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnNewButton_1)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(4)
+									.addComponent(lblQuestionId))
+								.addComponent(btnNewButton))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE, false)
+								.addComponent(btnIniciar)
+								.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnTerminar)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnSalir, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnNewButton_2, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+								.addComponent(panelOptions, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+							.addGap(302))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(panelDrow, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+							.addGap(11)))
+					.addComponent(lblInfo, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
+					.addGap(6))
+		);
+		panelDrow.setLayout(new BorderLayout(0, 0));
+		panelDrow.add(textPane);
 		setLayout(groupLayout);
-		btnIniciar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				textArea.setEditable(false);
-				btnIniciar.setEnabled(false);
-				btnTerminar.setEnabled(true);
-				main.toNewQuestion();
-				// setResOptions(false, false, false, false);
-			}
-		});
-		btnTerminar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				textArea.setEditable(true);
-				btnIniciar.setEnabled(true);
-				btnTerminar.setEnabled(false);
-				
-				panelDrow.getGraphics().clearRect(0, 0,  panelDrow.getWidth(), panelDrow.getHeight());
-				
-			}
-		});
-		
 		
 	}
+
+	private int getFixedIndex(int index, int max) {
+		if(index<0)
+			return max-1;
+		return index % max;
+	}
 	
-	public void init () {
+	protected void refreshAllQuestions(int newIndex) {
 		List<Question> allQuestions = DataQueries.getAllQuestion();
-		if (allQuestions.size() != 0 && actualQuestionIndex == 0) {
-			actualQuestionIndex= allQuestions.size()-1;
-			actualQuestion = allQuestions.get(actualQuestionIndex);
-		
+		if(allQuestions.size() != 0) {
+			actualQuestionIndex = getFixedIndex(newIndex, allQuestions.size()) ;
+			actualQuestion = allQuestions.get(actualQuestionIndex);	
 		}
 		refreshPanelDraw();
 	}
 
+	public void init () {
+		List<Question> allQuestions = DataQueries.getAllQuestion();
+		refreshAllQuestions(-1);
+	}
+
 	public void addQuestion() {
 		main.toPoll();
-		textArea.setEditable(false);
-		btnIniciar.setEnabled(false);
-		btnTerminar.setEnabled(true);
-		// setResOptions(false, false, false, false);
-		
-		refreshPanelDraw();
 	}
 	
 	
 	
 	
 	protected void refreshPanelDraw() {
+		Graphics g =this.getGraphics(); 
+		BufferedImage image;
+		try {
+			image = ImageIO.read(new File("./Resources/Images/sky.png"));
+			g.drawImage(image, 0,0,this.getWidth(), this.getHeight(), null);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		
 		if (actualQuestion== null)
 			return;
-		textArea.setText(actualQuestion.getName());
+		String tmpQuestion = actualQuestion.getName()+"\n";
+		for (Response res : actualQuestion.getResponses()) {
+			tmpQuestion+="\n"+ res.getValue()+". "+res.getName();
+		}
+		textPane.setText(tmpQuestion);
 		lblQuestionId.setText(actualQuestion.getCvn_question_id()+"");
 		
-		//panel_1.getGraphics().fillRect(0, 0, panel_1.getWidth(), panel_1.getHeight());
+		//panelDrow.getGraphics().fillRect(0, 0, panelDrow.getWidth(), panelDrow.getHeight());
+		this.paint(this.getGraphics());
 		refreshTotals();
-		doScan();
+		
+		//doScan();
 	}
 	
 	public void refreshTotals() {
 		QType type = QType.valueOf(actualQuestion.getType());
 		main.cffQ = DataQueries.getCff(actualQuestion.getCvn_question_id());
-		if(isMouseOver) {
-			Color color = panelDrow.getGraphics().getColor();
-			//panel.getGraphics().fillRect(0, 0, panel.getWidth(), panel.getHeight());
-			Graphics g =panelDrow.getGraphics(); 
-			g.setColor(Color.WHITE);
-			g.fillRect(0, 0,  panelDrow.getWidth(), panelDrow.getHeight());
-			float i =2.0f;
-			for (Response res : actualQuestion.getResponses()) {
-				paintText(panelDrow, 0.02f, 0.07f+i*0.08f, mainColor, res.getValue()+" : "+res.getName());
-				i++;
-			}
-		}else {
-			if(type == QType.SN) {
-				paintSN();
-			}else if(type == QType.AB){
-				paintAB();
-			}else if(type == QType.ABC){
-				paintABC();
-			}else if(type == QType.ABCD){
-				paintABCD();
-			}
+		
+		if(isMouseOver)
+			return;
+		
+		if(type == QType.SN) {
+			paintSN();
+		}else if(type == QType.AB){
+			paintAB();
+		}else if(type == QType.ABC){
+			paintABC();
+		}else if(type == QType.ABCD){
+			paintABCD();
 		}
 		float fontSize = 0.015f;
 		
@@ -354,14 +393,14 @@ public class PanelPoll extends Panel{
 	
 	
 	public void paintBar(JPanel panel, float dx, float dy, float size, boolean clear, String bar_color, String name, String text) {
-		
+		dx=dx-0.1f;
 		float dFont=0.026f;
 		Color color = panel.getGraphics().getColor();
 		//panel.getGraphics().fillRect(0, 0, panel.getWidth(), panel.getHeight());
 		Graphics g =panel.getGraphics(); 
 		if(clear) {
-			g.setColor(Color.WHITE);
 			g.fillRect(0, 0,  panel.getWidth(), panel.getHeight());
+			g.drawImage(imageFondo1, 0, 0,  panel.getWidth(), panel.getHeight(), null);
 		}
 		float w=panel.getWidth();
 		float h=panel.getHeight();
@@ -462,6 +501,8 @@ public class PanelPoll extends Panel{
 		
 		String response = code;
 		String  value = "null";
+		
+		//extrae el valor de la respuesta
 		switch (response) {
 			case "1":
 				value="SI";
@@ -482,7 +523,8 @@ public class PanelPoll extends Panel{
 				value="D";
 				break;
 		}
-		//get user id
+		
+		//ignora respuestas que no corresponden a la pregunta
 		QType type = QType.valueOf(actualQuestion.getType());
 		if(type == QType.SN && (!value.equals("SI") && !value.equals("NO"))) {
 			refreshTotals();
@@ -507,6 +549,8 @@ public class PanelPoll extends Panel{
 			return;
 		}
 		
+		
+		// cargalos datos del usuario
 		String SQL="Select cvn_user_id from cvn_user where ref_id= '"+ref_id+"'";
 		ResultSet rs = DataBase.get().executeQuery(SQL);
 		try {
@@ -516,8 +560,9 @@ public class PanelPoll extends Panel{
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
+		
 		final String  value_ =value;
-		//insert response
+		//insert user response 
 		if(user_id!=0) {
 			String SQL_D = "delete from cvn_res_user where "
 					+ "cvn_user_id = "+user_id
