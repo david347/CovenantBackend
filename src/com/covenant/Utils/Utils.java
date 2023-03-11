@@ -1,11 +1,16 @@
 package com.covenant.Utils;
 
+import java.awt.Graphics;
+import java.awt.Panel;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
+
+import javax.imageio.ImageIO;
 
 public class Utils {
 
@@ -62,5 +67,16 @@ public class Utils {
 		if(Float.isNaN(n) )
 			return "0%";
 		return getRounded(n*100) + "%";
+	}
+	
+	public static void paintBackground(Panel pane, Graphics g, String imageName) {
+		BufferedImage image;
+		try {
+			image = ImageIO.read(new File("./Resources/Images/"+imageName+".png"));
+			g.drawImage(image, 0,0,pane.getWidth(), pane.getHeight(), null);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		pane.paintComponents(g);
 	}
 }

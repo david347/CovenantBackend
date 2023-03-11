@@ -50,7 +50,6 @@ public class MainFramePanelQuorum {
 
 	private JFrame frmCovenant;
 	private JTextField textField;
-	JLabel lblNewLabel;
 	JTextArea textArea;
 	private Panel panel;
 	private PanelNew menu;
@@ -66,6 +65,7 @@ public class MainFramePanelQuorum {
 	public float quorum;
 	public float cffQ = 0f;
 	public List<User> users;
+	public Color defColor = new Color(200, 225, 255);
 
 	/**
 	 * Launch the application.
@@ -108,7 +108,12 @@ public class MainFramePanelQuorum {
 		frmCovenant.getContentPane().setLayout(new BorderLayout());
 		frmCovenant.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		panel = new Panel();
+		panel = new Panel(){
+			@Override
+			public void paint(Graphics g) {
+				Utils.paintBackground(this, g, "home");
+			}
+		};
 		panel.setBackground(Color.WHITE);
 
 		textField = new JTextField();
@@ -118,19 +123,13 @@ public class MainFramePanelQuorum {
 				if (KeyEvent.VK_ENTER == e.getKeyCode()) {
 					drawBar(10, 50, 0.5f);
 					String code = textField.getText();
+					textField.setText("");
 					String ref = code.substring(0, code.length() - 1);
 					state.handle(code);
-					lblNewLabel.setText(ref);
-					textField.setText("");
 				}
 			}
 		});
 		textField.setColumns(10);
-
-		JLabel lblUltimaVotacion = new JLabel(">>");
-
-		lblNewLabel = new JLabel("--");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 		JButton btnNewButton = new JButton("Back");
 		btnNewButton.addActionListener(new ActionListener() {
@@ -142,15 +141,16 @@ public class MainFramePanelQuorum {
 		poll = new PanelPoll(this);
 		menu = new PanelNew(this);
 		home = new PanelHome(this);
+		
 		PAssist = new PanelOut(this);
 
 		pNewQuestion = new PanelNewQuestion(this, poll);
 		frmCovenant.getContentPane().add(home, BoxLayout.X_AXIS);
-
+		
 		panel_1 = new JPanel();
 		panel_1.setBorder(null);
 		panel_1.setToolTipText("");
-		panel_1.setBackground(new Color(255, 255, 255));
+		panel_1.setBackground(defColor);
 
 		btnVotaciones = new JButton("Votar");
 		btnVotaciones.setBackground(SystemColor.activeCaption);
@@ -163,48 +163,44 @@ public class MainFramePanelQuorum {
 		scrollPane = new JScrollPane();
 		scrollPane.setViewportBorder(null);
 		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(gl_panel.createParallelGroup(Alignment.LEADING).addGroup(gl_panel
-				.createSequentialGroup().addGap(10)
-				.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+		gl_panel.setHorizontalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addGap(10)
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 173, GroupLayout.PREFERRED_SIZE)
-						.addGroup(gl_panel.createSequentialGroup().addGroup(gl_panel
-								.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_panel.createSequentialGroup()
-										.addComponent(lblUltimaVotacion, GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-										.addGap(114))
-								.addGroup(gl_panel.createSequentialGroup()
-										.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
-										.addGap(18)))
-								.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-										.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 119,
-												GroupLayout.PREFERRED_SIZE)
-										.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 119,
-												GroupLayout.PREFERRED_SIZE)
-										.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 240,
-												GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(ComponentPlacement.RELATED)))
-				.addGap(6)));
-		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING).addGroup(gl_panel
-				.createSequentialGroup().addGap(11)
-				.addComponent(
-						textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addGap(11)
-				.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE).addComponent(lblUltimaVotacion)
-						.addComponent(lblNewLabel))
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_panel.createSequentialGroup()
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnNewButton).addGap(16))
-						.addGroup(gl_panel.createSequentialGroup().addComponent(panel_1, GroupLayout.DEFAULT_SIZE,
-								GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addContainerGap()))));
+							.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addGap(18)
+							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+								.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)))
+					.addGap(6))
+		);
+		gl_panel.setVerticalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addGap(11)
+					.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(31)
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnVotaciones, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnNewButton)
+							.addGap(16))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addContainerGap())))
+		);
 
 		textArea = new JTextArea();
-		textArea.setForeground(Color.GRAY);
+		textArea.setEditable(false);
+		textArea.setBackground(defColor);
 		textArea.setFont(new Font("Monospaced", Font.BOLD, 18));
 		scrollPane.setViewportView(textArea);
 		panel_1.setLayout(null);
@@ -255,8 +251,8 @@ public class MainFramePanelQuorum {
 		// panel_1.getGraphics().fillRect(0, 0, panel_1.getWidth(),
 		// panel_1.getHeight());
 		Graphics g = panel_1.getGraphics();
-		g.setColor(Color.WHITE);
-		g.clearRect(0, 0, panel_1.getWidth(), panel_1.getHeight());
+		g.setColor(defColor);
+		g.fillRect(0, 0, panel_1.getWidth(), panel_1.getHeight());
 		float w = panel_1.getWidth();
 		float h = panel_1.getHeight();
 
