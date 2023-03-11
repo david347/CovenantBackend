@@ -73,10 +73,10 @@ public class MainFramePanelQuorum {
 	 * @throws FileNotFoundException
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
-		// PrintStream errStream = new PrintStream(new File("errFile.txt"));
-		// System.setErr(errStream);
-		// PrintStream outStream = new PrintStream(new File("outFile.txt"));
-		// System.setOut(outStream);
+		PrintStream errStream = new PrintStream(new File("errFile.txt"));
+		System.setErr(errStream);
+		PrintStream outStream = new PrintStream(new File("outFile.txt"));
+		System.setOut(outStream);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

@@ -328,12 +328,12 @@ public class PanelPoll extends Panel{
 		if(allQuestions.size() != 0) {
 			actualQuestionIndex = getFixedIndex(newIndex, allQuestions.size()) ;
 			actualQuestion = allQuestions.get(actualQuestionIndex);	
+			lblQuestionId.setText(actualQuestion.getCvn_question_id()+"");
 		}
 		refreshTotals();
 	}
 
 	public void init () {
-		List<Question> allQuestions = DataQueries.getAllQuestion();
 		refreshAllQuestions(-1);
 	}
 
@@ -355,7 +355,6 @@ public class PanelPoll extends Panel{
 	
 	
 	protected void refreshTotals() {
-		System.out.println("actual Config:"+actualConfig.name()+", QuestionFullPane:"+QuestionFullPane.isVisible());
 		repaintBackground();
 		if (actualQuestion== null)
 			return;
@@ -367,9 +366,7 @@ public class PanelPoll extends Panel{
 			}
 		}
 		QuestionFullPane.setText(tmpQuestionStr);
-		//TODO mover esta linea
-		lblQuestionId.setText(actualQuestion.getCvn_question_id()+"");
-		
+		main.cffQ = DataQueries.getCff(actualQuestion.getCvn_question_id());
 		if(actualConfig == DRAW_CONFIG.QUESTION_ANSWERS || actualConfig == DRAW_CONFIG.QUESTION_SIMPLE) {
 			if(!QuestionFullPane.isVisible()) {
 				QuestionFullPane.setBounds(10, 10, panelDraw.getWidth()-20, (int)(panelDraw.getHeight()*0.5f)-20);
@@ -402,7 +399,6 @@ public class PanelPoll extends Panel{
 	}
 	
 	public void refreshQuorumInfo() {
-		main.cffQ = DataQueries.getCff(actualQuestion.getCvn_question_id());
 		float fontSize = 0.018f;
 		paintText(panelDraw, 0.02f, 0.04f, mainColor, "Quorum Total:  "+  Utils.getAsPer(main.quorum), fontSize);
 		paintText(panelDraw, 0.02f, 0.08f, mainColor, "Quorum Actual: "+ Utils.getAsPer(main.cffQ), fontSize);
@@ -538,16 +534,19 @@ public class PanelPoll extends Panel{
 	}
 	
 	private void doScan() {
+		
 		int user_id=0;
-		int length =textField_1.getText().length();
+		String scanStr = textField_1.getText();
+		System.out.println(scanStr);
+		int length =scanStr.length();
 		if(length==0) {
 			return;
 		}
 
 		
 		
-		String ref_id = textField_1.getText().substring(0,length-1);
-		String code=  textField_1.getText().substring(length-1,length);
+		String ref_id = scanStr.substring(0,length-1);
+		String code=  scanStr.substring(length-1,length);
 		
 		if(!main.containsUserByRef(ref_id)) {
 			User auxUser = DataQueries.getUserByRef(ref_id);
@@ -588,32 +587,13 @@ public class PanelPoll extends Panel{
 		}
 		
 		//ignora respuestas que no corresponden a la pregunta
-		QType type = QType.valueOf(actualQuestion.getType());
-		if(type == QType.SN && (!value.equals("SI") && !value.equals("NO"))) {
-			refreshTotals();
-			textField_1.setText("");
-			return;
-		}
-		else
-		if(type == QType.AB && (value !="A" && value !="B")){
-			textField_1.setText("");
-			refreshTotals();;
-			return;
-		}
-		else
-		if(type == QType.ABC && (value !="A" && value !="B" && value !="C")) {
-			refreshTotals();
-			textField_1.setText("");
-			return;
-		}else
-		if(type == QType.ABCD && (value !="A" && value !="B" && value !="C" && value !="D")) {
-			refreshTotals();
+		if(!isValidInput(value)) {
 			textField_1.setText("");
 			return;
 		}
 		
 		
-		// cargalos datos del usuario
+		// carga los datos del usuario
 		String SQL="Select cvn_user_id from cvn_user where ref_id= '"+ref_id+"'";
 		ResultSet rs = DataBase.get().executeQuery(SQL);
 		try {
@@ -646,6 +626,25 @@ public class PanelPoll extends Panel{
 		textField_1.setText("");
 	}
 	
+	private boolean isValidInput(String value) {
+		QType type = QType.valueOf(actualQuestion.getType());
+		if(type == QType.SN && (!value.equals("SI") && !value.equals("NO"))) {
+			return false;
+		}
+		else
+		if(type == QType.AB && (value !="A" && value !="B")){
+			return false;
+		}
+		else
+		if(type == QType.ABC && (value !="A" && value !="B" && value !="C")) {
+			return false;
+		}else
+		if(type == QType.ABCD && (value !="A" && value !="B" && value !="C" && value !="D")) {
+			return false;
+		}
+		return true;
+	}
+
 	public String getQuestion() {
 		return question;
 	}
